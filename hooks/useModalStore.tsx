@@ -1,7 +1,7 @@
 import { SessionExam } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "createSession";
+export type ModalType = "createSession" | "createDepartment" | "createFiliere";
 
 interface ModalData {
   session?: SessionExam;

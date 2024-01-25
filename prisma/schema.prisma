@@ -17,7 +17,7 @@ model SessionExam {
 
 model Journee {
   id            String      @id @default(uuid())
-  date          DateTime
+  date          DateTime    @db.Date()
   sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id])
   sessionExamId String
   Creneau       Creneau[]

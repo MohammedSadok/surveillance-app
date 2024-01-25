@@ -1,5 +1,6 @@
 "use client";
 
+import DepartementModal from "@/components/modals/departement-modal";
 import SessionModal from "@/components/modals/session-modal";
 import { useEffect, useState } from "react";
 
@@ -16,8 +17,8 @@ export const ModalProvider = () => {
 
   return (
     <>
+      <DepartementModal />
       <SessionModal />
-      {/* <StoreModal /> */}
     </>
   );
 };

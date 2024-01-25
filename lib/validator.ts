@@ -11,3 +11,12 @@ export const SessionSchema = z.object({
     required_error: "Date de fin de session is required.",
   }),
 });
+
+export const DepartementSchema = z.object({
+  nom: z.string(),
+});
+
+export const FiliereSchema = z.object({
+  nom: z.string(),
+  departementId: z.string(),
+});

@@ -16,17 +16,28 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
     const { type, dateDebut, dateFin } = SessionSchema.parse({
       ...body,
       dateDebut: new Date(body.dateDebut),
       dateFin: new Date(body.dateFin),
     });
+    const differenceInDays = Math.floor(
+      (dateFin.getTime() - dateDebut.getTime()) / (1000 * 3600 * 24)
+    );
     const session = await db.sessionExam.create({
       data: {
         type,
         dateDebut,
         dateFin,
+        Journee: {
+          createMany: {
+            data: Array.from({ length: differenceInDays + 1 }).map(
+              (_, index) => ({
+                date: new Date(dateDebut.getTime() + index * 24 * 3600 * 1000),
+              })
+            ),
+          },
+        },
       },
     });
 
@@ -35,6 +46,8 @@ export async function POST(req: Request) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }
-    return new NextResponse("Could not create ExamSession", { status: 500 });
+    return new NextResponse("Could not create ExamSession " + error, {
+      status: 500,
+    });
   }
 }

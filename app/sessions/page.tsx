@@ -7,10 +7,11 @@ const SessionsPage = async () => {
   const sessions = await db.sessionExam.findMany({
     orderBy: { dateDebut: "desc" },
   });
+
   const formattedSessions: SessionColum[] = sessions.map((item) => ({
     ...item,
     dateDebut: format(item.dateDebut, "MMMM do, yyyy"),
-    dateFin: format(item.dateDebut, "MMMM do, yyyy"),
+    dateFin: format(item.dateFin, "MMMM do, yyyy"),
   }));
   return (
     <div className="flex-1 space-y-4 pt-2">

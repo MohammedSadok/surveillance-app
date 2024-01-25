@@ -1,13 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import {
-  BarChart3,
-  BookCheck,
-  CalendarDays,
-  Command,
-  Image,
-  X,
-} from "lucide-react";
+import { BookCheck, CalendarDays, Command } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -29,7 +22,7 @@ export function MainNav() {
           <span
             className={cn(
               "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              path === "/home" ? "bg-accent" : "transparent"
+              path === "/sessions" ? "bg-accent" : "transparent"
             )}
           >
             <CalendarDays className="mr-2 h-4 w-4" />
@@ -40,11 +33,33 @@ export function MainNav() {
           <span
             className={cn(
               "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              path === "/home" ? "bg-accent" : "transparent"
+              path === "/examens" ? "bg-accent" : "transparent"
             )}
           >
             <BookCheck className="mr-2 h-4 w-4" />
             <span>Examens</span>
+          </span>
+        </Link>
+        <Link href="/departement">
+          <span
+            className={cn(
+              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              path === "/departement" ? "bg-accent" : "transparent"
+            )}
+          >
+            <BookCheck className="mr-2 h-4 w-4" />
+            <span>Departement</span>
+          </span>
+        </Link>
+        <Link href="/filiere">
+          <span
+            className={cn(
+              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              path === "/filiere" ? "bg-accent" : "transparent"
+            )}
+          >
+            <BookCheck className="mr-2 h-4 w-4" />
+            <span>Filiere</span>
           </span>
         </Link>
       </nav>
