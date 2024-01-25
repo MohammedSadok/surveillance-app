@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SessionExam {
+  id        String    @id @default(uuid())
+  type      String
+  dateDebut DateTime  @db.Date()
+  dateFin   DateTime  @db.Date()
+  Journee   Journee[]
+}
+
+model Journee {
+  id            String      @id @default(uuid())
+  date          DateTime
+  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id])
+  sessionExamId String
+  Creneau       Creneau[]
+}
+
+model Creneau {
+  id         String  @id @default(uuid())
+  heureDebut String
+  heureFin   String
+  journee    Journee @relation(fields: [journeeId], references: [id])
+  journeeId  String
+  Examen     Examen?
+}
+
+model Local {
+  id           String         @id @default(uuid())
+  nom          String
+  emplacement  String
+  taille       Int
+  Surveillance Surveillance[]
+}
+
+model Departement {
+  id       String    @id @default(uuid())
+  nom      String
+  Filieres Filiere[]
+}
+
+model Filiere {
+  id            String      @id @default(uuid())
+  nom           String
+  departementId String
+  departement   Departement @relation(fields: [departementId], references: [id])
+  Module        Module[]
+  Examen        Examen[]
+}
+
+model Module {
+  id                 String     @id @default(uuid())
+  nom                String
+  filiereId          String
+  enseignantId       String
+  responsable_module Enseignant @relation(fields: [enseignantId], references: [id])
+  filiere            Filiere    @relation(fields: [filiereId], references: [id])
+  Examen             Examen[]
+}
+
+model Enseignant {
+  id           String         @id @default(uuid())
+  nom          String
+  prenom       String
+  numero_tel   String
+  e_mail       String
+  Surveillance Surveillance[]
+  Module       Module[]
+}
+
+model Examen {
+  id                     String         @id @default(uuid())
+  nom                    String
+  moduleId               String
+  filiereId              String
+  nombreDetudiantInscrit Int
+  Module                 Module         @relation(fields: [moduleId], references: [id])
+  creneau                Creneau        @relation(fields: [creneauId], references: [id])
+  creneauId              String         @unique
+  filiere                Filiere        @relation(fields: [filiereId], references: [id])
+  Surveillance           Surveillance[]
+}
+
+model Surveillance {
+  id           String     @id @default(uuid())
+  enseignantId String
+  examenId     String
+  localId      String
+  enseignant   Enseignant @relation(fields: [enseignantId], references: [id])
+  examen       Examen     @relation(fields: [examenId], references: [id])
+  local        Local      @relation(fields: [localId], references: [id])
+}

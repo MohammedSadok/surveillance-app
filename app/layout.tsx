@@ -1,9 +1,10 @@
 import "@/app/globals.css";
 import { MainNav } from "@/components/main-navigation";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { ToastProvider } from "@/providers/toast-provider";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 export const metadata: Metadata = {
@@ -40,11 +41,12 @@ export default function RootLayout({
               </div>
             </header>
             <main className="flex w-full flex-1 flex-col overflow-hidden container">
+              <ToastProvider />
+              <ModalProvider />
               {children}
               {/* <ModalProvider /> */}
             </main>
           </div>
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>
