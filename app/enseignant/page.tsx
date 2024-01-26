@@ -1,17 +1,17 @@
 import db from "@/lib/prismadb";
-import { FiliereClient } from "./components/Client";
+import { EnseignantClient } from "./components/Client";
 
 const FilierePage = async () => {
-  const filieres = await db.filiere.findMany({
+  const enseignants = await db.enseignant.findMany({
     include: {
       departement: true,
     },
   });
-  console.log("=>  FilierePage  filieres:", filieres);
   const departement = await db.departement.findMany();
+  console.log("=>  FilierePage  enseignants:", enseignants);
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <FiliereClient data={filieres} departements={departement} />
+      <EnseignantClient data={enseignants} departements={departement} />
     </div>
   );
 };

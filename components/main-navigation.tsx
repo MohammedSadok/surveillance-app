@@ -1,6 +1,14 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { BookCheck, CalendarDays, Command } from "lucide-react";
+import {
+  Book,
+  BookCheck,
+  BookOpen,
+  Building2,
+  CalendarDays,
+  Command,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -47,7 +55,7 @@ export function MainNav() {
               path === "/departement" ? "bg-accent" : "transparent"
             )}
           >
-            <BookCheck className="mr-2 h-4 w-4" />
+            <BookOpen className="mr-2 h-4 w-4" />
             <span>Departement</span>
           </span>
         </Link>
@@ -58,8 +66,30 @@ export function MainNav() {
               path === "/filiere" ? "bg-accent" : "transparent"
             )}
           >
-            <BookCheck className="mr-2 h-4 w-4" />
+            <Book className="mr-2 h-4 w-4" />
             <span>Filiere</span>
+          </span>
+        </Link>
+        <Link href="/enseignant">
+          <span
+            className={cn(
+              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              path === "/enseignant" ? "bg-accent" : "transparent"
+            )}
+          >
+            <User className="mr-2 h-4 w-4" />
+            <span>Enseignant</span>
+          </span>
+        </Link>
+        <Link href="/locaux">
+          <span
+            className={cn(
+              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+              path === "/locaux" ? "bg-accent" : "transparent"
+            )}
+          >
+            <Building2 className="mr-2 h-4 w-4" />
+            <span>Locaux</span>
           </span>
         </Link>
       </nav>

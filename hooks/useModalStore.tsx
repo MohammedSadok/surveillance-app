@@ -1,10 +1,18 @@
-import { SessionExam } from "@prisma/client";
+import { Departement, Filiere, SessionExam } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "createSession" | "createDepartment" | "createFiliere";
+export type ModalType =
+  | "createSession"
+  | "createDepartment"
+  | "createFiliere"
+  | "createEnseignant"
+  | "createLocal";
 
 interface ModalData {
   session?: SessionExam;
+  departement?: Departement;
+  departements?: Departement[];
+  filiere?: Filiere;
   apiUrl?: string;
   query?: Record<string, any>;
 }

@@ -41,9 +41,10 @@ model Local {
 }
 
 model Departement {
-  id       String    @id @default(uuid())
-  nom      String
-  Filieres Filiere[]
+  id          String       @id @default(uuid())
+  nom         String
+  Filieres    Filiere[]
+  Enseignants Enseignant[]
 }
 
 model Filiere {
@@ -66,13 +67,15 @@ model Module {
 }
 
 model Enseignant {
-  id           String         @id @default(uuid())
-  nom          String
-  prenom       String
-  numero_tel   String
-  e_mail       String
-  Surveillance Surveillance[]
-  Module       Module[]
+  id            String         @id @default(uuid())
+  nom           String
+  prenom        String
+  numero_tel    String
+  e_mail        String
+  departementId String
+  departement   Departement    @relation(fields: [departementId], references: [id])
+  Surveillance  Surveillance[]
+  Module        Module[]
 }
 
 model Examen {

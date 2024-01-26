@@ -5,12 +5,10 @@ import { z } from "zod";
 
 export async function GET() {
   try {
-    const sessions = await db.sessionExam.findMany({
-      orderBy: { dateDebut: "desc" },
-    });
-    return NextResponse.json(sessions);
+    const departements = await db.departement.findMany();
+    return NextResponse.json(departements);
   } catch {
-    return new NextResponse("Could not get ExamSessions", { status: 500 });
+    return new NextResponse("Could not get Departements", { status: 500 });
   }
 }
 export async function POST(req: Request) {

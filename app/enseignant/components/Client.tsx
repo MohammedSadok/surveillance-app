@@ -5,16 +5,17 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
-import { DepartementType, FiliereType } from "@/lib/types";
+import { EnseignantType } from "@/lib/types";
+import { Departement } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
 
-interface FiliereClientProps {
-  data: FiliereType[];
-  departements: DepartementType[];
+interface EnseignantClientProps {
+  data: EnseignantType[];
+  departements: Departement[];
 }
 
-export const FiliereClient: React.FC<FiliereClientProps> = ({
+export const EnseignantClient: React.FC<EnseignantClientProps> = ({
   data,
   departements,
 }) => {
@@ -24,18 +25,18 @@ export const FiliereClient: React.FC<FiliereClientProps> = ({
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Filieres (${data.length})`}
-          description="Manage Filieres"
+          title={`Enseignants (${data.length})`}
+          description="Manage Enseignants"
         />
-        <Button onClick={() => onOpen("createFiliere", { departements })}>
+        <Button onClick={() => onOpen("createEnseignant", { departements })}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
       <Separator />
       <DataTable searchKey="nom" columns={columns} data={data} />
-      {/* <Heading title="API" description="API Calls for Filieres" /> */}
+      {/* <Heading title="API" description="API Calls for Enseignants" /> */}
       {/* <Separator /> */}
-      {/* <ApiList entityName="Filieres" entityIdName="FiliereId" /> */}
+      {/* <ApiList entityName="Enseignants" entityIdName="EnseignantId" /> */}
     </>
   );
 };

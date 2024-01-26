@@ -85,7 +85,7 @@ const SessionModal = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Session</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}

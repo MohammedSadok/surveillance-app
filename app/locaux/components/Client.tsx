@@ -5,37 +5,31 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
-import { DepartementType, FiliereType } from "@/lib/types";
+import { Local } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
-
-interface FiliereClientProps {
-  data: FiliereType[];
-  departements: DepartementType[];
+interface LocalClientProps {
+  data: Local[];
 }
 
-export const FiliereClient: React.FC<FiliereClientProps> = ({
-  data,
-  departements,
-}) => {
+export const LocalClient: React.FC<LocalClientProps> = ({ data }) => {
   const { onOpen } = useModal();
-
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Filieres (${data.length})`}
-          description="Manage Filieres"
+          title={`Locals (${data.length})`}
+          description="Manage Locals"
         />
-        <Button onClick={() => onOpen("createFiliere", { departements })}>
+        <Button onClick={() => onOpen("createLocal")}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
       <Separator />
       <DataTable searchKey="nom" columns={columns} data={data} />
-      {/* <Heading title="API" description="API Calls for Filieres" /> */}
+      {/* <Heading title="API" description="API Calls for =Locals" /> */}
       {/* <Separator /> */}
-      {/* <ApiList entityName="Filieres" entityIdName="FiliereId" /> */}
+      {/* <ApiList entityName="=Locals" entityIdName="=LocalId" /> */}
     </>
   );
 };

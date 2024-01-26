@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useModal } from "@/hooks/useModalStore";
-import { DepartementType } from "@/lib/types";
 import { FiliereSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -24,15 +24,20 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
-interface FiliereModalProps {
-  departements: DepartementType[];
-}
-const DepartementModal = () => {
-  const { isOpen, onClose, type } = useModal();
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+
+const FiliereModal = () => {
+  const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
+  const { departements } = data;
 
-  const isModalOpen = isOpen && type === "createDepartment";
-
+  const isModalOpen = isOpen && type === "createFiliere";
   const form = useForm({
     resolver: zodResolver(FiliereSchema),
     defaultValues: {
@@ -84,6 +89,33 @@ const DepartementModal = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="departementId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Session</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selectionner le type de session" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {departements?.map((item) => (
+                          <SelectItem value={item.id} key={item.id}>
+                            {item.nom}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <DialogFooter className="px-6 py-4 bg-gray-100">
               <Button disabled={isLoading}>Créer</Button>
@@ -94,4 +126,4 @@ const DepartementModal = () => {
     </Dialog>
   );
 };
-export default DepartementModal;
+export default FiliereModal;
