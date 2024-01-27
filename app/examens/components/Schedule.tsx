@@ -6,10 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { day } from "@/constants";
+import { PlusCircle } from "lucide-react";
 import { Jour } from "../page";
 
 interface ScheduleProps {
@@ -26,14 +27,6 @@ const Schedule: React.FC<ScheduleProps> = ({ days }) => {
   if (!isMounted) {
     return null;
   }
-  type ScheduleItem = {
-    [key: string]: string[];
-  };
-
-  const day: ScheduleItem[] = [
-    { Matin: ["8:00 AM - 10:00 AM", "10:00 AM - 12:00 AM"] },
-    { Soir: ["2:00 PM - 4:00 PM", "4:00 PM - 6:00 PM"] },
-  ];
 
   return (
     <Table className="border rounded-lg">
@@ -73,10 +66,10 @@ const Schedule: React.FC<ScheduleProps> = ({ days }) => {
         {days.map((item) => (
           <TableRow key={item.id} className="py-4">
             <TableCell className="border text-center">{item.date}</TableCell>
-
-            {Array.from({ length: 4 }).map((_, index) => (
-              <TableCell key={index} className="border text-center">
+            {item.Creneau.map((crenauItem) => (
+              <TableCell key={crenauItem.id} className="border text-center">
                 <Button className="" variant="ghost">
+                  {/* {crenauItem.id} */}
                   <PlusCircle />
                 </Button>
               </TableCell>

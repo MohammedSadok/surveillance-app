@@ -1,3 +1,4 @@
+import { day } from "@/constants";
 import db from "@/lib/prismadb";
 import { SessionSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
@@ -21,10 +22,11 @@ export async function POST(req: Request) {
       dateDebut: new Date(body.dateDebut),
       dateFin: new Date(body.dateFin),
     });
+
     const differenceInDays = Math.floor(
       (dateFin.getTime() - dateDebut.getTime()) / (1000 * 3600 * 24)
     );
-    const session = await db.sessionExam.create({
+    const createdSession = await db.sessionExam.create({
       data: {
         type,
         dateDebut,
@@ -39,9 +41,25 @@ export async function POST(req: Request) {
           },
         },
       },
+      include: {
+        Journee: true,
+      },
     });
+    for (const journee of createdSession.Journee) {
+      await db.creneau.createMany({
+        data: day.flatMap((scheduleItem) =>
+          Object.entries(scheduleItem).flatMap(([periode, slots]) =>
+            slots.map((slot) => ({
+              heureDebut: slot.split(" - ")[0],
+              heureFin: slot.split(" - ")[1],
+              journeeId: journee.id,
+            }))
+          )
+        ),
+      });
+    }
 
-    return NextResponse.json(session);
+    return NextResponse.json(createdSession);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });

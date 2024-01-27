@@ -8,7 +8,7 @@ datasource db {
 }
 
 model SessionExam {
-  id        String    @id @default(uuid())
+  id        Int       @id @default(autoincrement())
   type      String
   dateDebut DateTime  @db.Date()
   dateFin   DateTime  @db.Date()
@@ -16,87 +16,67 @@ model SessionExam {
 }
 
 model Journee {
-  id            String      @id @default(uuid())
+  id            Int         @id @default(autoincrement())
   date          DateTime    @db.Date()
   sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id])
-  sessionExamId String
+  sessionExamId Int
   Creneau       Creneau[]
 }
 
 model Creneau {
-  id         String  @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   heureDebut String
   heureFin   String
-  journee    Journee @relation(fields: [journeeId], references: [id])
-  journeeId  String
-  Examen     Examen?
+  journeeId  Int
+  journee    Journee  @relation(fields: [journeeId], references: [id])
+  Examen     Examen[]
 }
 
-model Local {
-  id           String         @id @default(uuid())
-  nom          String
-  emplacement  String
-  taille       Int
+model Examen {
+  id                     Int    @id @default(autoincrement())
+  nomDeModule            String
+  filieres               String
+  nombreDetudiantInscrit Int
+
+  creneauId          Int        @unique
+  enseignantId       Int        @unique
+  responsable_module Enseignant @relation(fields: [enseignantId], references: [id])
+
   Surveillance Surveillance[]
+  Creneau      Creneau        @relation(fields: [creneauId], references: [id])
 }
 
 model Departement {
-  id          String       @id @default(uuid())
+  id          Int          @id @default(autoincrement())
   nom         String
-  Filieres    Filiere[]
   Enseignants Enseignant[]
 }
 
-model Filiere {
-  id            String      @id @default(uuid())
-  nom           String
-  departementId String
-  departement   Departement @relation(fields: [departementId], references: [id])
-  Module        Module[]
-  Examen        Examen[]
-}
-
-model Module {
-  id                 String     @id @default(uuid())
-  nom                String
-  filiereId          String
-  enseignantId       String
-  responsable_module Enseignant @relation(fields: [enseignantId], references: [id])
-  filiere            Filiere    @relation(fields: [filiereId], references: [id])
-  Examen             Examen[]
-}
-
 model Enseignant {
-  id            String         @id @default(uuid())
+  id            Int            @id @default(autoincrement())
   nom           String
   prenom        String
   numero_tel    String
   e_mail        String
-  departementId String
+  departementId Int
   departement   Departement    @relation(fields: [departementId], references: [id])
   Surveillance  Surveillance[]
-  Module        Module[]
-}
-
-model Examen {
-  id                     String         @id @default(uuid())
-  nom                    String
-  moduleId               String
-  filiereId              String
-  nombreDetudiantInscrit Int
-  Module                 Module         @relation(fields: [moduleId], references: [id])
-  creneau                Creneau        @relation(fields: [creneauId], references: [id])
-  creneauId              String         @unique
-  filiere                Filiere        @relation(fields: [filiereId], references: [id])
-  Surveillance           Surveillance[]
+  Examen        Examen?
 }
 
 model Surveillance {
-  id           String     @id @default(uuid())
-  enseignantId String
-  examenId     String
-  localId      String
-  enseignant   Enseignant @relation(fields: [enseignantId], references: [id])
-  examen       Examen     @relation(fields: [examenId], references: [id])
-  local        Local      @relation(fields: [localId], references: [id])
+  id          Int          @id @default(autoincrement())
+  enseignants Enseignant[]
+  examenId    Int
+  examen      Examen       @relation(fields: [examenId], references: [id])
+  local       Local        @relation(fields: [localId], references: [id])
+  localId     Int          @unique
+}
+
+model Local {
+  id           Int           @id @default(autoincrement())
+  nom          String
+  emplacement  String
+  taille       Int
+  surveillance Surveillance?
 }

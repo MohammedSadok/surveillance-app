@@ -45,7 +45,7 @@ const EnseignantModal = () => {
       prenom: "",
       numero_tel: "",
       e_mail: "",
-      departementId: "",
+      departementId: 0,
     },
   });
 
@@ -143,19 +143,19 @@ const EnseignantModal = () => {
                 name="departementId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Session</FormLabel>
+                    <FormLabel>Departement</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      // onValueChange={field.onChange}
+                      onValueChange={(value) => field.onChange(Number(value))}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selectionner le type de session" />
+                          <SelectValue placeholder="Selectionner le departement" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {departements?.map((item) => (
-                          <SelectItem value={item.id} key={item.id}>
+                          <SelectItem value={item.id.toString()} key={item.id}>
                             {item.nom}
                           </SelectItem>
                         ))}

@@ -3,14 +3,14 @@ import { LocalSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-// export async function GET() {
-//   try {
-//     const locals = await db.local.findMany();
-//     return NextResponse.json(locals);
-//   } catch {
-//     return new NextResponse("Could not get locals", { status: 500 });
-//   }
-// }
+export async function GET() {
+  try {
+    const locals = await db.local.findMany();
+    return NextResponse.json(locals);
+  } catch {
+    return new NextResponse("Could not get locals", { status: 500 });
+  }
+}
 export async function POST(req: Request) {
   try {
     const body = await req.json();

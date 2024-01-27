@@ -34,7 +34,7 @@ export const EnseignantSchema = z.object({
   e_mail: z.string().email({
     message: "Veuillez entrer une adresse e-mail valide.",
   }),
-  departementId: z.string().min(1, {
+  departementId: z.number().int().min(1, {
     message: "Veuillez sélectionner un département.",
   }),
 });

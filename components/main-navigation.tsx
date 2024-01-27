@@ -1,7 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import {
-  Book,
   BookCheck,
   BookOpen,
   Building2,
@@ -57,17 +56,6 @@ export function MainNav() {
           >
             <BookOpen className="mr-2 h-4 w-4" />
             <span>Departement</span>
-          </span>
-        </Link>
-        <Link href="/filiere">
-          <span
-            className={cn(
-              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              path === "/filiere" ? "bg-accent" : "transparent"
-            )}
-          >
-            <Book className="mr-2 h-4 w-4" />
-            <span>Filiere</span>
           </span>
         </Link>
         <Link href="/enseignant">
