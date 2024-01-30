@@ -38,7 +38,7 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
   });
   const formattedJournees: Jour[] = journees.map((item) => ({
     ...item,
-    date: format(item.date, "MM/dd/yyyy"),
+    date: format(item.date, "dd/MM/yyyy"),
   }));
   console.log(
     "=>  constformattedJournees:Jour[]=journees.map  formattedJournees:",
@@ -53,7 +53,7 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
           description="Manage Journee"
         />
       </div>
-      <Schedule days={formattedJournees} />
+      <Schedule days={formattedJournees} sessionId={params.sessionId} />
     </div>
   );
 };

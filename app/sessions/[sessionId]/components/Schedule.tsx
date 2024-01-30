@@ -20,13 +20,15 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { day } from "@/constants";
 import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 import { Jour } from "../page";
 
 interface ScheduleProps {
   days: Jour[];
+  sessionId: string;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ days }) => {
+const Schedule: React.FC<ScheduleProps> = ({ days, sessionId }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -87,10 +89,12 @@ const Schedule: React.FC<ScheduleProps> = ({ days }) => {
               <TableCell className="border text-center">{item.date}</TableCell>
               {item.Creneau.map((crenauItem) => (
                 <TableCell key={crenauItem.id} className="border text-center">
-                  <Button className="" variant="ghost">
-                    {/* {crenauItem.id} */}
-                    <PlusCircle />
-                  </Button>
+                  <Link href={`/sessions/${sessionId}/${crenauItem.id} `}>
+                    <Button className="" variant="ghost">
+                      {/* */}
+                      <PlusCircle />
+                    </Button>
+                  </Link>
                 </TableCell>
               ))}
             </TableRow>
