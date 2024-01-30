@@ -18,7 +18,7 @@ model SessionExam {
 model Journee {
   id            Int         @id @default(autoincrement())
   date          DateTime    @db.Date()
-  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id])
+  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id], onDelete: Cascade)
   sessionExamId Int
   Creneau       Creneau[]
 }
@@ -28,7 +28,7 @@ model Creneau {
   heureDebut String
   heureFin   String
   journeeId  Int
-  journee    Journee  @relation(fields: [journeeId], references: [id])
+  journee    Journee  @relation(fields: [journeeId], references: [id], onDelete: Cascade)
   Examen     Examen[]
 }
 
@@ -40,10 +40,10 @@ model Examen {
 
   creneauId          Int        @unique
   enseignantId       Int        @unique
-  responsable_module Enseignant @relation(fields: [enseignantId], references: [id])
+  responsable_module Enseignant @relation(fields: [enseignantId], references: [id], onDelete: Cascade)
 
   Surveillance Surveillance[]
-  Creneau      Creneau        @relation(fields: [creneauId], references: [id])
+  Creneau      Creneau        @relation(fields: [creneauId], references: [id], onDelete: Cascade)
 }
 
 model Departement {
@@ -59,7 +59,7 @@ model Enseignant {
   numero_tel    String
   e_mail        String
   departementId Int
-  departement   Departement    @relation(fields: [departementId], references: [id])
+  departement   Departement    @relation(fields: [departementId], references: [id], onDelete: Cascade)
   Surveillance  Surveillance[]
   Examen        Examen?
 }
@@ -68,8 +68,8 @@ model Surveillance {
   id          Int          @id @default(autoincrement())
   enseignants Enseignant[]
   examenId    Int
-  examen      Examen       @relation(fields: [examenId], references: [id])
-  local       Local        @relation(fields: [localId], references: [id])
+  examen      Examen       @relation(fields: [examenId], references: [id], onDelete: Cascade)
+  local       Local        @relation(fields: [localId], references: [id], onDelete: Cascade)
   localId     Int          @unique
 }
 

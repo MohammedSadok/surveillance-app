@@ -3,7 +3,6 @@ import db from "@/lib/prismadb";
 import { SessionSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-
 export async function GET() {
   try {
     const sessions = await db.sessionExam.findMany({
@@ -14,6 +13,7 @@ export async function GET() {
     return new NextResponse("Could not get ExamSessions", { status: 500 });
   }
 }
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -29,8 +29,8 @@ export async function POST(req: Request) {
     const createdSession = await db.sessionExam.create({
       data: {
         type,
-        dateDebut,
-        dateFin,
+        dateDebut: dateDebut,
+        dateFin: dateFin,
         Journee: {
           createMany: {
             data: Array.from({ length: differenceInDays + 1 }).map(
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json(createdSession);
+    return NextResponse.json("hello");
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });

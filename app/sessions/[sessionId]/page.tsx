@@ -15,16 +15,18 @@ export type Jour = {
   date: string;
   Creneau: Creneau[];
 };
-const SessionsPage = async () => {
-  const lastSession = await db.sessionExam.findFirst({
-    orderBy: {
-      dateDebut: "desc",
-    },
-  });
+interface ExamsPageProps {
+  params: { sessionId: string };
+}
+const ExamsPage = async ({ params }: ExamsPageProps) => {
+  const id = parseInt(params.sessionId);
 
   const journees = await db.journee.findMany({
     where: {
-      sessionExamId: lastSession?.id,
+      sessionExamId: id,
+    },
+    orderBy: {
+      date: "asc",
     },
     include: {
       Creneau: {
@@ -56,4 +58,4 @@ const SessionsPage = async () => {
   );
 };
 
-export default SessionsPage;
+export default ExamsPage;

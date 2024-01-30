@@ -17,7 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useModal } from "@/hooks/useModalStore";
-import { cn } from "@/lib/utils";
 import { SessionSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -55,8 +54,18 @@ const SessionModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof SessionSchema>) => {
+    const formattedDateDebutString = format(values.dateDebut, "yyyy-MM-dd");
+    const formattedDateFinString = format(values.dateFin, "yyyy-MM-dd");
+    const dateDebut = new Date(formattedDateDebutString);
+    const dateFin = new Date(formattedDateFinString);
+
+    const formattedDate = {
+      type: values.type,
+      dateDebut: dateDebut,
+      dateFin: dateFin,
+    };
     try {
-      await axios.post("/api/sessions", values);
+      await axios.post("/api/sessions", formattedDate);
       form.reset();
       router.refresh();
       onClose();
@@ -159,10 +168,10 @@ const SessionModal = () => {
                         <FormControl>
                           <Button
                             variant={"outline"}
-                            className={cn(
-                              "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
+                            // className={cn(
+                            //   "pl-3 text-left font-normal",
+                            //   !field.value && "text-muted-foreground"
+                            // )}
                           >
                             {field.value ? (
                               format(field.value, "PPP")

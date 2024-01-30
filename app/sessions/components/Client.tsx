@@ -14,7 +14,6 @@ interface SessionClientProps {
 
 export const SessionClient: React.FC<SessionClientProps> = ({ data }) => {
   const { onOpen } = useModal();
-
   return (
     <>
       <div className="flex items-center justify-between">

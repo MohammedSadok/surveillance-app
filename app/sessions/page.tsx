@@ -5,7 +5,7 @@ import { SessionColum } from "./components/Columns";
 
 const SessionsPage = async () => {
   const sessions = await db.sessionExam.findMany({
-    orderBy: { dateDebut: "desc" },
+    orderBy: { id: "desc" },
   });
 
   const formattedSessions: SessionColum[] = sessions.map((item) => ({

@@ -1,18 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
   ColumnDef,
-  SortingState,
   ColumnFiltersState,
+  SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
+import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -20,23 +22,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[],
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
   searchKey: string;
+  handleClick?: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
+  handleClick,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
@@ -49,7 +51,7 @@ export function DataTable<TData, TValue>({
     state: {
       columnFilters,
       sorting,
-    }
+    },
   });
 
   return (
@@ -79,7 +81,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -90,17 +92,24 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={handleClick}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -127,5 +136,5 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }
