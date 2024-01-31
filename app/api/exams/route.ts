@@ -1,5 +1,7 @@
 import db from "@/lib/prismadb";
+import { ExamSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET() {
   // const enseignants = await db.enseignant.findMany({
@@ -69,12 +71,32 @@ export async function GET() {
   return NextResponse.json({ surveillance, freeTeachers, freeLocaux });
 }
 
-// const exam = await db.examen.create({
-//   data: {
-//     filieres: "SMI",
-//     nombreDetudiantInscrit: 150,
-//     nomDeModule: "Math",
-//     creneauId: 1,
-//     enseignantId: 1,
-//   },
-// });
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { filiers, nomDeModule, responsible, studentsNumber, creneauId } =
+      ExamSchema.parse(body);
+    if (creneauId) {
+      const exam = await db.examen.create({
+        data: {
+          filieres: filiers,
+          nombreDetudiantInscrit: studentsNumber,
+          nomDeModule: nomDeModule,
+          creneauId: creneauId,
+          enseignantId: responsible,
+        },
+      });
+
+      return NextResponse.json(exam);
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return new Response(error.message, { status: 422 });
+    }
+    return new NextResponse("Could not create Exam " + error, {
+      status: 500,
+    });
+  }
+}

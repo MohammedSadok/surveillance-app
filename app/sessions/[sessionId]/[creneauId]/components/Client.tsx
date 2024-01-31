@@ -9,7 +9,6 @@ import { Creneau, Journee } from "@prisma/client";
 import { format } from "date-fns";
 import { Plus } from "lucide-react";
 import { ExamColum, columns } from "./Columns";
-
 interface ExamClientProps {
   data: ExamColum[];
   creneau: (Creneau & { journee: Journee }) | null;
@@ -32,15 +31,12 @@ export const ExamClient: React.FC<ExamClientProps> = ({ data, creneau }) => {
             />
           )
         }
-        <Button onClick={() => onOpen("createSession")}>
+        <Button onClick={() => onOpen("createExam")}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>
       <Separator />
       <DataTable searchKey="nomDeModule" columns={columns} data={data} />
-      {/* <Heading title="API" description="API Calls for Sessions" /> */}
-      {/* <Separator /> */}
-      {/* <ApiList entityName="Sessions" entityIdName="SessionId" /> */}
     </>
   );
 };

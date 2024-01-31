@@ -50,3 +50,21 @@ export const LocalSchema = z.object({
     message: "La taille doit être un nombre entier positif .",
   }),
 });
+
+export const ExamSchema = z.object({
+  nomDeModule: z.string().min(3, {
+    message: "Le nom doit contenir au moins 3 caractères.",
+  }),
+  filiers: z.string().min(3, {
+    message: "les filiers !",
+  }),
+  studentsNumber: z.number().int().min(1, {
+    message: "le nombre d'etudiants doive etre positife .",
+  }),
+  responsible: z.number().int().min(1, {
+    message: "le responsable de module est requis .",
+  }),
+  creneauId: z.number().int().min(1, {
+    message: "le responsable de module est requis .",
+  }),
+});

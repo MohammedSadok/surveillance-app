@@ -38,7 +38,7 @@ model Examen {
   filieres               String
   nombreDetudiantInscrit Int
 
-  creneauId          Int        @unique
+  creneauId          Int
   enseignantId       Int        @unique
   responsable_module Enseignant @relation(fields: [enseignantId], references: [id], onDelete: Cascade)
 
