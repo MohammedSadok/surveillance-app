@@ -5,6 +5,7 @@ import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,10 +15,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EnseignantType } from "@/lib/types";
+import { DepartementType } from "@/lib/types";
 
 interface CellActionProps {
-  data: EnseignantType;
+  data: DepartementType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -29,7 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.delete(`/api/departements/${data.id}`);
       toast.success("Billboard deleted.");
       router.refresh();
     } catch (error) {

@@ -104,12 +104,12 @@ const LocalModal = () => {
                   <FormItem>
                     <FormLabel>La taille</FormLabel>
                     <Input
-                      type="number"
                       disabled={isLoading}
                       placeholder="Entrez la taille"
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) =>
+                        field.onChange(parseInt(e.target.value, 10) || 0)
+                      }
                       value={field.value}
-                      // {...field}
                     />
                     <FormMessage />
                   </FormItem>

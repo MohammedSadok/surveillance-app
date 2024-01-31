@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { SessionColum } from "./Columns";
+import { ExamColum } from "./Columns";
 
 interface CellActionProps {
-  data: SessionColum;
+  data: ExamColum;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -31,8 +31,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/sessions/${data.id}`);
-      toast.success("Session deleted.");
+      await axios.delete(`/api/exams/${data.id}`);
+      toast.success("Exam deleted.");
       router.refresh();
     } catch (error) {
       toast.error(

@@ -1,11 +1,5 @@
 "use client";
 
-import axios from "axios";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-
 import { AlertModal } from "@/components/modals/alert-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +9,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DepartementType } from "@/lib/types";
+import { EnseignantType } from "@/lib/types";
+import axios from "axios";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface CellActionProps {
-  data: DepartementType;
+  data: EnseignantType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -30,7 +29,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.delete(`/api/enseignant/${data.id}`);
       toast.success("Billboard deleted.");
       router.refresh();
     } catch (error) {
