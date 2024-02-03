@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 
+import scheduleImage from "@/assets/images/schedule.png";
 import { ModeToggle } from "@/components/mode-toggle";
+import Image from "next/image";
 import { UserAuthForm } from "./components/user-auth-form";
-
 export const metadata: Metadata = {
   title: "Authentification",
   description:
@@ -32,9 +33,19 @@ export default function AuthenticationPage() {
           </svg>
           Acme Inc
         </div>
-        <div className="relative z-20 mt-auto">
+        <div className="w-full h-1/2 relative mt-auto">
+          <Image
+            src={scheduleImage}
+            fill={true}
+            alt={""}
+            style={{
+              objectFit: "contain",
+            }}
+          />
+        </div>
+        <div className="relative  mt-auto">
           <blockquote className="space-y-2">
-            <p className="text-lg">
+            <p className="text-lg text-justify">
               Notre plateforme constitue une solution intégrale dédiée à la
               supervision des salles d'examen. Bénéficiez d'un processus
               d'authentification sécurisé spécifiquement conçu pour les
