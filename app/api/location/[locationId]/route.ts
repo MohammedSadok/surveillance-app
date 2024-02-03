@@ -1,18 +1,18 @@
 import db from "@/lib/prismadb";
-import { LocalSchema } from "@/lib/validator";
+import { LocationSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { localId: string } }
+  { params }: { params: { locationId: string } }
 ) {
   try {
-    if (!params.localId) {
+    if (!params.locationId) {
       return new NextResponse("Local id is required", { status: 400 });
     }
-    const exam = await db.local.delete({
+    const exam = await db.location.delete({
       where: {
-        id: parseInt(params.localId),
+        id: parseInt(params.locationId),
       },
     });
     return NextResponse.json(exam);
@@ -24,22 +24,21 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { localId: string } }
+  { params }: { params: { locationId: string } }
 ) {
   try {
-    if (!params.localId) {
+    if (!params.locationId) {
       return new NextResponse("Local id is required", { status: 400 });
     }
     const body = await req.json();
-    const { nom, emplacement, taille } = LocalSchema.parse(body);
-    const exam = await db.local.update({
+    const { name, size } = LocationSchema.parse(body);
+    const exam = await db.location.update({
       where: {
-        id: parseInt(params.localId),
+        id: parseInt(params.locationId),
       },
       data: {
-        nom,
-        emplacement,
-        taille,
+        name,
+        size,
       },
     });
     return NextResponse.json(exam);

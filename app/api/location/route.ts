@@ -1,32 +1,33 @@
 import db from "@/lib/prismadb";
-import { DepartmentSchema } from "@/lib/validator";
+import { LocationSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function GET() {
   try {
-    const departments = await db.department.findMany();
-    return NextResponse.json(departments);
+    const locations = await db.location.findMany();
+    return NextResponse.json(locations);
   } catch {
-    return new NextResponse("Could not get Departments", { status: 500 });
+    return new NextResponse("Could not get locations", { status: 500 });
   }
 }
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name } = DepartmentSchema.parse(body);
-    const department = await db.department.create({
+    const { name, size } = LocationSchema.parse(body);
+    const location = await db.location.create({
       data: {
         name,
+        size,
       },
     });
 
-    return NextResponse.json(department);
+    return NextResponse.json(location);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }
-    return new NextResponse("Could not create Department " + error, {
+    return new NextResponse("Could not create location " + error, {
       status: 500,
     });
   }

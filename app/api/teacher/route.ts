@@ -1,12 +1,12 @@
 import db from "@/lib/prismadb";
-import { EnseignantSchema } from "@/lib/validator";
+import { TeacherSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function GET() {
   try {
-    const enseignants = await db.enseignant.findMany();
-    return NextResponse.json(enseignants);
+    const teachers = await db.teacher.findMany();
+    return NextResponse.json(teachers);
   } catch {
     return new NextResponse("Could not get ExamSessions", { status: 500 });
   }
@@ -15,24 +15,24 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { prenom, e_mail, numero_tel, nom, departementId } =
-      EnseignantSchema.parse(body);
-    const enseignant = await db.enseignant.create({
+    const { firstName, lastName, phoneNumber, email, departmentId } =
+      TeacherSchema.parse(body);
+    const teacher = await db.teacher.create({
       data: {
-        nom,
-        prenom,
-        e_mail,
-        numero_tel,
-        departementId,
+        firstName,
+        lastName,
+        phoneNumber,
+        email,
+        departmentId,
       },
     });
 
-    return NextResponse.json(enseignant);
+    return NextResponse.json(teacher);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }
-    return new NextResponse("Could not create Enseignant " + error, {
+    return new NextResponse("Could not create Teacher " + error, {
       status: 500,
     });
   }

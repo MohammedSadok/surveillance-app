@@ -10,7 +10,7 @@ export async function DELETE(
     if (!params.examId) {
       return new NextResponse("Session id is required", { status: 400 });
     }
-    const exam = await db.examen.delete({
+    const exam = await db.exam.delete({
       where: {
         id: parseInt(params.examId),
       },
@@ -30,18 +30,23 @@ export async function PATCH(
       return new NextResponse("Local id is required", { status: 400 });
     }
     const body = await req.json();
-    const { creneauId, filiers, nomDeModule, responsible, studentsNumber } =
-      ExamSchema.parse(body);
-    const exam = await db.examen.update({
+    const {
+      enrolledStudentsCount,
+      moduleName,
+      options,
+      responsibleId,
+      timeSlotId,
+    } = ExamSchema.parse(body);
+    const exam = await db.exam.update({
       where: {
         id: parseInt(params.examId),
       },
       data: {
-        creneauId,
-        enseignantId: responsible,
-        filieres: filiers,
-        nomDeModule,
-        nombreDetudiantInscrit: studentsNumber,
+        enrolledStudentsCount,
+        moduleName,
+        options,
+        responsibleId,
+        timeSlotId,
       },
     });
     return NextResponse.json(exam);

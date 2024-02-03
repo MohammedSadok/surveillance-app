@@ -2,69 +2,63 @@ import { z } from "zod";
 
 export const SessionSchema = z.object({
   type: z.string({
-    required_error: "Please select an email to display.",
+    required_error: "Veuillez sélectionner un type pour la session d'examens.",
   }),
-  dateDebut: z.date({
-    required_error: "Date de début de session is required.",
+  startDate: z.date({
+    required_error: "La date de début de session est requise.",
   }),
-  dateFin: z.date({
-    required_error: "Date de fin de session is required.",
+  endDate: z.date({
+    required_error: "La date de fin de session est requise.",
   }),
 });
 
-export const DepartementSchema = z.object({
-  nom: z.string(),
-});
-
-export const FiliereSchema = z.object({
-  nom: z.string(),
-  departementId: z.string(),
-});
-
-export const EnseignantSchema = z.object({
-  nom: z.string().min(3, {
+export const DepartmentSchema = z.object({
+  name: z.string().min(3, {
     message: "Le nom doit contenir au moins 3 caractères.",
   }),
-  prenom: z.string().min(3, {
+});
+
+export const TeacherSchema = z.object({
+  lastName: z.string().min(3, {
+    message: "Le nom doit contenir au moins 3 caractères.",
+  }),
+  firstName: z.string().min(3, {
     message: "Le prénom doit contenir au moins 3 caractères.",
   }),
-  numero_tel: z.string().refine((value) => value.length === 10, {
+  phoneNumber: z.string().refine((value) => value.length === 10, {
     message: "Le numéro de téléphone doit contenir exactement 10 caractères.",
   }),
-  e_mail: z.string().email({
+  email: z.string().email({
     message: "Veuillez entrer une adresse e-mail valide.",
   }),
-  departementId: z.number().int().min(1, {
+  departmentId: z.number().int().min(1, {
     message: "Veuillez sélectionner un département.",
   }),
 });
 
-export const LocalSchema = z.object({
-  nom: z.string().min(3, {
+export const LocationSchema = z.object({
+  name: z.string().min(3, {
     message: "Le nom doit contenir au moins 3 caractères.",
   }),
-  emplacement: z.string().min(3, {
-    message: "L'emplacement doit contenir au moins 3 caractères.",
-  }),
-  taille: z.number().int().min(1, {
-    message: "La taille doit être un nombre entier positif .",
+  size: z.number().int().min(1, {
+    message: "La taille doit être un nombre entier positif.",
   }),
 });
 
 export const ExamSchema = z.object({
-  nomDeModule: z.string().min(3, {
+  moduleName: z.string().min(3, {
     message: "Le nom doit contenir au moins 3 caractères.",
   }),
-  filiers: z.string().min(3, {
-    message: "les filiers !",
+  options: z.string().min(3, {
+    message: "Le champ des options doit contenir au moins 3 caractères.",
   }),
-  studentsNumber: z.number().int().min(1, {
-    message: "le nombre d'etudiants doive etre positife .",
+  enrolledStudentsCount: z.number().int().min(1, {
+    message: "Le nombre d'étudiants doit être positif.",
   }),
-  responsible: z.number().int().min(1, {
-    message: "le responsable de module est requis .",
+  responsibleId: z.number().int().min(1, {
+    message: "Le responsable du module est requis.",
   }),
-  creneauId: z.number().int().min(1, {
-    message: "le responsable de module est requis .",
+  timeSlotId: z.number().int().min(1, {
+    message: "L'identifiant de l'intervalle de temps est requis.",
   }),
 });

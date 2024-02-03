@@ -1,4 +1,4 @@
-import { day } from "@/constants";
+import { days } from "@/constants";
 import db from "@/lib/prismadb";
 import { SessionSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
@@ -6,7 +6,7 @@ import { z } from "zod";
 export async function GET() {
   try {
     const sessions = await db.sessionExam.findMany({
-      orderBy: { dateDebut: "desc" },
+      orderBy: { id: "desc" },
     });
     return NextResponse.json(sessions);
   } catch {
@@ -17,42 +17,42 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { type, dateDebut, dateFin } = SessionSchema.parse({
+    const { type, endDate, startDate } = SessionSchema.parse({
       ...body,
-      dateDebut: new Date(body.dateDebut),
-      dateFin: new Date(body.dateFin),
+      startDate: new Date(body.startDate),
+      endDate: new Date(body.endDate),
     });
 
     const differenceInDays = Math.floor(
-      (dateFin.getTime() - dateDebut.getTime()) / (1000 * 3600 * 24)
+      (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
     );
     const createdSession = await db.sessionExam.create({
       data: {
         type,
-        dateDebut: dateDebut,
-        dateFin: dateFin,
-        Journee: {
+        startDate: startDate,
+        endDate: endDate,
+        day: {
           createMany: {
             data: Array.from({ length: differenceInDays + 1 }).map(
               (_, index) => ({
-                date: new Date(dateDebut.getTime() + index * 24 * 3600 * 1000),
+                date: new Date(startDate.getTime() + index * 24 * 3600 * 1000),
               })
             ),
           },
         },
       },
       include: {
-        Journee: true,
+        day: true,
       },
     });
-    for (const journee of createdSession.Journee) {
-      await db.creneau.createMany({
-        data: day.flatMap((scheduleItem) =>
-          Object.entries(scheduleItem).flatMap(([periode, slots]) =>
+    for (const day of createdSession.day) {
+      await db.timeSlot.createMany({
+        data: days.flatMap((scheduleItem) =>
+          Object.entries(scheduleItem).flatMap(([time, slots]) =>
             slots.map((slot) => ({
-              heureDebut: slot.split(" - ")[0],
-              heureFin: slot.split(" - ")[1],
-              journeeId: journee.id,
+              startTime: slot.split(" - ")[0],
+              endTime: slot.split(" - ")[1],
+              dayId: day.id,
             }))
           )
         ),

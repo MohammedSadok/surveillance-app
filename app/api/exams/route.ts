@@ -35,62 +35,63 @@ export async function GET() {
   //   },
   // });
 
-  const surveillance = await db.surveillance.findMany({
+  const surveillance = await db.monitoring.findMany({
     include: {
-      enseignants: true,
+      teachers: true,
       // examen: { include: { Creneau: true } },
-      local: true,
+      location: true,
     },
-    where: { examen: { creneauId: 1 } },
+    where: { exam: { timeSlotId: 1 } },
   });
   const occupiedTeacherIds = surveillance.flatMap((item) =>
-    item.enseignants.map((teacher) => teacher.id)
+    item.teachers.map((teacher) => teacher.id)
   );
 
-  const freeTeachers = await db.enseignant.findMany({
+  const freeTeachers = await db.teacher.findMany({
     where: {
       id: {
         notIn: occupiedTeacherIds,
       },
     },
   });
-  const occupiedLocaux = await db.surveillance.findMany({
+  const occupiedLocations = await db.monitoring.findMany({
     where: {
-      examen: { creneauId: 1 },
+      exam: { timeSlotId: 1 },
     },
     select: { id: true },
   });
-  const occupiedLocauxIds = occupiedLocaux.map((local) => local.id);
-  const freeLocaux = await db.local.findMany({
+  const occupiedLocationsIds = occupiedLocations.map((local) => local.id);
+  const freeLocations = await db.location.findMany({
     where: {
       id: {
-        notIn: occupiedLocauxIds,
+        notIn: occupiedLocationsIds,
       },
     },
   });
-  return NextResponse.json({ surveillance, freeTeachers, freeLocaux });
+  return NextResponse.json({ surveillance, freeTeachers, freeLocations });
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { filiers, nomDeModule, responsible, studentsNumber, creneauId } =
-      ExamSchema.parse(body);
-    if (creneauId) {
-      const exam = await db.examen.create({
-        data: {
-          filieres: filiers,
-          nombreDetudiantInscrit: studentsNumber,
-          nomDeModule: nomDeModule,
-          creneauId,
-          enseignantId: responsible,
-        },
-      });
+    const {
+      moduleName,
+      options,
+      responsibleId,
+      enrolledStudentsCount,
+      timeSlotId,
+    } = ExamSchema.parse(body);
+    const exam = await db.exam.create({
+      data: {
+        moduleName,
+        options,
+        responsibleId,
+        enrolledStudentsCount,
+        timeSlotId,
+      },
+    });
 
-      return NextResponse.json(exam);
-    } else {
-      throw new Error();
-    }
+    return NextResponse.json(exam);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
