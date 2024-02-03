@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "@/hooks/useModalStore";
-import { Local } from "@prisma/client";
+import { Location } from "@prisma/client";
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface CellActionProps {
-  data: Local;
+  data: Location;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -30,13 +30,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/locaux/${data.id}`);
-      toast.success("Billboard deleted.");
+      await axios.delete(`/api/location/${data.id}`);
+      toast.success("Location deleted.");
       router.refresh();
     } catch (error) {
-      toast.error(
-        "Make sure you removed all categories using this billboard first."
-      );
+      toast.error("Make sure you removed all time slots first.");
     } finally {
       setOpen(false);
       setLoading(false);

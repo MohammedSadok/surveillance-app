@@ -34,7 +34,7 @@ import { useModal } from "@/hooks/useModalStore";
 import { cn } from "@/lib/utils";
 import { ExamSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Departement, Enseignant } from "@prisma/client";
+import { Department, Teacher } from "@prisma/client";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
@@ -48,11 +48,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const ExamModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const { exam } = data;
-  const [departments, setDepartments] = useState<Departement[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [department, setDepartment] = useState<number | null>(null);
-  const [teachers, setTeachers] = useState<Enseignant[] | undefined>();
+  const [teachers, setTeachers] = useState<Teacher[] | undefined>();
   const [open, setOpen] = useState(false);
-  const [selectedTeacher, setSelectedTeacher] = useState<Enseignant | null>();
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,20 +95,20 @@ const ExamModal = () => {
   const form = useForm({
     resolver: zodResolver(ExamSchema),
     defaultValues: {
-      nomDeModule: "",
-      filiers: "",
-      studentsNumber: 0,
-      responsible: 0,
-      creneauId: parseInt(params.creneauId),
+      moduleName: "",
+      options: "",
+      enrolledStudentsCount: 0,
+      responsibleId: 0,
+      timeSlotId: parseInt(params.creneauId),
     },
   });
   useEffect(() => {
     if (exam) {
-      form.setValue("nomDeModule", exam.nomDeModule);
-      form.setValue("filiers", exam.filieres);
-      form.setValue("studentsNumber", exam.nombreDetudiantInscrit);
-      form.setValue("responsible", exam.enseignantId);
-      form.setValue("creneauId", parseInt(params.creneauId));
+      form.setValue("moduleName", exam.moduleName);
+      form.setValue("options", exam.options);
+      form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
+      form.setValue("responsibleId", exam.responsibleId);
+      form.setValue("timeSlotId", parseInt(params.creneauId));
     }
   }, [exam, form, params.creneauId]);
 
@@ -145,7 +145,7 @@ const ExamModal = () => {
             <div className="px-6 space-y-4">
               <FormField
                 control={form.control}
-                name="nomDeModule"
+                name="moduleName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nom de Module</FormLabel>
@@ -160,7 +160,7 @@ const ExamModal = () => {
               />
               <FormField
                 control={form.control}
-                name="filiers"
+                name="options"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Les Filiers</FormLabel>
@@ -175,7 +175,7 @@ const ExamModal = () => {
               />
               <FormField
                 control={form.control}
-                name="studentsNumber"
+                name="enrolledStudentsCount"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Le nombre d'etudiants inscrit</FormLabel>
@@ -206,14 +206,14 @@ const ExamModal = () => {
                     <SelectContent>
                       {departments?.map((item) => (
                         <SelectItem value={item.id.toString()} key={item.id}>
-                          {item.nom}
+                          {item.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <FormField
                     control={form.control}
-                    name="responsible"
+                    name="responsibleId"
                     render={({ field }) => (
                       <FormItem className="col-span-6">
                         <Popover open={open} onOpenChange={setOpen}>
@@ -226,9 +226,9 @@ const ExamModal = () => {
                               className="flex-1 justify-between w-full"
                             >
                               {selectedTeacher
-                                ? selectedTeacher.nom +
+                                ? selectedTeacher.firstName +
                                   " " +
-                                  selectedTeacher.prenom
+                                  selectedTeacher.lastName
                                 : "Load teachers..."}
                               <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -248,7 +248,9 @@ const ExamModal = () => {
                                         setOpen(false);
                                       }}
                                     >
-                                      {teacher.nom + " " + teacher.prenom}
+                                      {teacher.firstName +
+                                        " " +
+                                        teacher.lastName}
                                       <CheckIcon
                                         className={cn(
                                           "ml-auto h-4 w-4",

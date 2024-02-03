@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -14,28 +15,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import React, { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import { day } from "@/constants";
+import { days } from "@/constants";
+import { sessionDays } from "@/lib/types";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
-import { Jour } from "../page";
+import React, { useEffect, useState } from "react";
 
 interface ScheduleProps {
-  days: Jour[];
+  sessionDays: sessionDays[];
   sessionId: string;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ days, sessionId }) => {
+const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = days.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = sessionDays.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -54,9 +52,9 @@ const Schedule: React.FC<ScheduleProps> = ({ days, sessionId }) => {
         <TableHeader>
           <TableRow>
             <TableCell className="border text-center" rowSpan={2}>
-              Jours
+              Days
             </TableCell>
-            {day.map((dayItem, index) => (
+            {days.map((dayItem, index) => (
               <React.Fragment key={index}>
                 <TableCell
                   key={index * 2}
@@ -69,7 +67,7 @@ const Schedule: React.FC<ScheduleProps> = ({ days, sessionId }) => {
             ))}
           </TableRow>
           <TableRow>
-            {day.map((dayItem, index) => (
+            {days.map((dayItem, index) => (
               <React.Fragment key={index}>
                 {Object.values(dayItem)[0].map((hour, hourIndex) => (
                   <TableCell
@@ -87,9 +85,9 @@ const Schedule: React.FC<ScheduleProps> = ({ days, sessionId }) => {
           {currentItems.map((item) => (
             <TableRow key={item.id} className="py-4">
               <TableCell className="border text-center">{item.date}</TableCell>
-              {item.Creneau.map((crenauItem) => (
-                <TableCell key={crenauItem.id} className="border text-center">
-                  <Link href={`/sessions/${sessionId}/${crenauItem.id} `}>
+              {item.timeSlot.map((timeSlotItem) => (
+                <TableCell key={timeSlotItem.id} className="border text-center">
+                  <Link href={`/sessions/${sessionId}/${timeSlotItem.id} `}>
                     <Button className="" variant="ghost">
                       {/* */}
                       <PlusCircle />

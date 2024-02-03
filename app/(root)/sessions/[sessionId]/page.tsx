@@ -1,27 +1,17 @@
 import { Heading } from "@/components/ui/heading";
 import db from "@/lib/prismadb";
-import { Examen } from "@prisma/client";
+import { Day, Exam, TimeSlot } from "@prisma/client";
 import { format } from "date-fns";
 import Schedule from "./components/Schedule";
-type Creneau = {
-  id: string;
-  heureDebut: string;
-  heureFin: string;
-  journeeId: string;
-  Examen: Examen;
-};
-export type Jour = {
-  id: string;
-  date: string;
-  Creneau: Creneau[];
-};
+import { sessionDays } from "@/lib/types";
+
 interface ExamsPageProps {
   params: { sessionId: string };
 }
 const ExamsPage = async ({ params }: ExamsPageProps) => {
   const id = parseInt(params.sessionId);
 
-  const journees = await db.journee.findMany({
+  const days = await db.day.findMany({
     where: {
       sessionExamId: id,
     },
@@ -29,31 +19,27 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
       date: "asc",
     },
     include: {
-      Creneau: {
+      timeSlot: {
         include: {
-          Examen: true,
+          Exam: true,
         },
       },
     },
   });
-  const formattedJournees: Jour[] = journees.map((item) => ({
+  const formattedDays: sessionDays[] = days.map((item) => ({
     ...item,
     date: format(item.date, "dd/MM/yyyy"),
   }));
-  console.log(
-    "=>  constformattedJournees:Jour[]=journees.map  formattedJournees:",
-    formattedJournees
-  );
 
   return (
     <div className="flex-1 space-y-4 pt-2">
       <div className="flex items-center justify-between">
         <Heading
-          title={`Journee (${journees.length})`}
+          title={`Journee (${days.length})`}
           description="Manage Journee"
         />
       </div>
-      <Schedule days={formattedJournees} sessionId={params.sessionId} />
+      <Schedule sessionDays={formattedDays} sessionId={params.sessionId} />
     </div>
   );
 };

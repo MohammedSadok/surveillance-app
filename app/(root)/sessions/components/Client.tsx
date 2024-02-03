@@ -27,9 +27,6 @@ export const SessionClient: React.FC<SessionClientProps> = ({ data }) => {
       </div>
       <Separator />
       <DataTable searchKey="type" columns={columns} data={data} />
-      {/* <Heading title="API" description="API Calls for Sessions" /> */}
-      {/* <Separator /> */}
-      {/* <ApiList entityName="Sessions" entityIdName="SessionId" /> */}
     </>
   );
 };

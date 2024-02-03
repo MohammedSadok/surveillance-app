@@ -1,18 +1,14 @@
 "use client";
-import { Local } from "@prisma/client";
+import { Location } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./CellAction";
-export const columns: ColumnDef<Local>[] = [
+export const columns: ColumnDef<Location>[] = [
   {
-    accessorKey: "nom",
+    accessorKey: "name",
     header: "Nom",
   },
   {
-    accessorKey: "emplacement",
-    header: "Emplacement",
-  },
-  {
-    accessorKey: "taille",
+    accessorKey: "size",
     header: "Taille",
   },
   {

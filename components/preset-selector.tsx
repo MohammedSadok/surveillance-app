@@ -19,15 +19,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Enseignant } from "@prisma/client";
+import { Teacher } from "@prisma/client";
 
 interface TeacherSelectorProps extends PopoverProps {
-  teachers: Enseignant[];
+  teachers: Teacher[];
 }
 
 export function TeacherSelector({ teachers, ...props }: TeacherSelectorProps) {
   const [open, setOpen] = React.useState(false);
-  const [selectedTeacher, setSelectedTeacher] = React.useState<Enseignant>();
+  const [selectedTeacher, setSelectedTeacher] = React.useState<Teacher>();
 
   return (
     <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -40,7 +40,7 @@ export function TeacherSelector({ teachers, ...props }: TeacherSelectorProps) {
           className="flex-1 justify-between w-[250px]"
         >
           {selectedTeacher
-            ? selectedTeacher.nom + " " + selectedTeacher.prenom
+            ? selectedTeacher.firstName + " " + selectedTeacher.lastName
             : "Load teachers..."}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -59,7 +59,7 @@ export function TeacherSelector({ teachers, ...props }: TeacherSelectorProps) {
                     setOpen(false);
                   }}
                 >
-                  {teacher.nom + " " + teacher.prenom}
+                  {teacher.firstName + " " + teacher.lastName}
                   <CheckIcon
                     className={cn(
                       "ml-auto h-4 w-4",

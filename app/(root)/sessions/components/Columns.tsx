@@ -4,10 +4,10 @@ import Link from "next/link";
 import { CellAction } from "./CellAction";
 
 export type SessionColum = {
-  id: string;
+  id: number;
   type: string;
-  dateDebut: string;
-  dateFin: string;
+  startDate: string;
+  endDate: string;
 };
 
 export const columns: ColumnDef<SessionColum>[] = [
@@ -22,11 +22,11 @@ export const columns: ColumnDef<SessionColum>[] = [
   },
 
   {
-    accessorKey: "dateDebut",
+    accessorKey: "startDate",
     header: "Date de Debut",
   },
   {
-    accessorKey: "dateFin",
+    accessorKey: "endDate",
     header: "Date de Fin",
   },
   {

@@ -1,22 +1,22 @@
 import db from "@/lib/prismadb";
-import { EnseignantClient } from "./components/Client";
+import { TeacherClient } from "./components/Client";
 interface TeacherPageProps {
-  params: { departementId: string };
+  params: { departmentId: string };
 }
 const TeacherPage = async ({ params }: TeacherPageProps) => {
-  const id = parseInt(params.departementId);
-  const enseignants = await db.enseignant.findMany({
+  const id = parseInt(params.departmentId);
+  const teachers = await db.teacher.findMany({
     where: {
-      departementId: id,
+      departmentId: id,
     },
     include: {
-      departement: true,
+      department: true,
     },
   });
 
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <EnseignantClient data={enseignants} />
+      <TeacherClient data={teachers} />
     </div>
   );
 };

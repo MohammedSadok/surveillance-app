@@ -1,14 +1,14 @@
 import db from "@/lib/prismadb";
-import { DepartementClient } from "./components/Client";
+import { DepartmentClient } from "./components/Client";
 
-const DepartementPage = async () => {
-  const departements = await db.departement.findMany({});
+const DepartmentPage = async () => {
+  const departments = await db.department.findMany({});
 
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <DepartementClient data={departements} />
+      <DepartmentClient data={departments} />
     </div>
   );
 };
 
-export default DepartementPage;
+export default DepartmentPage;

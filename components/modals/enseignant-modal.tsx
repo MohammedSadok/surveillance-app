@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useModal } from "@/hooks/useModalStore";
-import { EnseignantSchema } from "@/lib/validator";
+import { TeacherSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
 
-const EnseignantModal = () => {
+const TeacherModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const params = useParams();
   const router = useRouter();
@@ -35,31 +35,31 @@ const EnseignantModal = () => {
     isOpen && (type === "createTeacher" || type === "updateTeacher");
 
   const form = useForm({
-    resolver: zodResolver(EnseignantSchema),
+    resolver: zodResolver(TeacherSchema),
     defaultValues: {
-      nom: "",
-      prenom: "",
-      numero_tel: "",
-      e_mail: "",
-      departementId: 0,
+      lastName: "",
+      firstName: "",
+      phoneNumber: "",
+      email: "",
+      departmentId: 0,
     },
   });
   useEffect(() => {
     if (teacher) {
-      form.setValue("nom", teacher.nom);
-      form.setValue("prenom", teacher.prenom);
-      form.setValue("departementId", teacher.departementId);
-      form.setValue("e_mail", teacher.e_mail);
-      form.setValue("numero_tel", teacher.numero_tel);
-    } else form.setValue("departementId", parseInt(params.departementId));
-  }, [teacher, form, params.departementId]);
+      form.setValue("firstName", teacher.firstName);
+      form.setValue("lastName", teacher.lastName);
+      form.setValue("departmentId", teacher.departmentId);
+      form.setValue("email", teacher.email);
+      form.setValue("phoneNumber", teacher.phoneNumber);
+    } else form.setValue("departmentId", parseInt(params.departmentId));
+  }, [teacher, form, params.departmentId]);
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof EnseignantSchema>) => {
+  const onSubmit = async (values: z.infer<typeof TeacherSchema>) => {
     try {
-      if (type === "createTeacher") await axios.post("/api/enseignant", values);
-      else await axios.patch(`/api/enseignant/${teacher?.id}`, values);
+      if (type === "createTeacher") await axios.post("/api/teacher", values);
+      else await axios.patch(`/api/teacher/${teacher?.id}`, values);
       form.reset();
       router.refresh();
       onClose();
@@ -85,7 +85,7 @@ const EnseignantModal = () => {
             <div className="px-6 space-y-4">
               <FormField
                 control={form.control}
-                name="nom"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nom</FormLabel>
@@ -100,7 +100,7 @@ const EnseignantModal = () => {
               />
               <FormField
                 control={form.control}
-                name="prenom"
+                name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Prenom</FormLabel>
@@ -115,7 +115,7 @@ const EnseignantModal = () => {
               />
               <FormField
                 control={form.control}
-                name="e_mail"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>E-mail</FormLabel>
@@ -131,7 +131,7 @@ const EnseignantModal = () => {
               />
               <FormField
                 control={form.control}
-                name="numero_tel"
+                name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Numero de telephone</FormLabel>
@@ -144,33 +144,6 @@ const EnseignantModal = () => {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="departementId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Departement</FormLabel>
-                    <Select
-                      // onValueChange={field.onChange}
-                      onValueChange={(value) => field.onChange(Number(value))}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selectionner le departement" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {departements?.map((item) => (
-                          <SelectItem value={item.id.toString()} key={item.id}>
-                            {item.nom}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
             </div>
             <DialogFooter className="px-6 py-4 bg-gray-100">
               <Button disabled={isLoading}>Créer</Button>
@@ -181,4 +154,4 @@ const EnseignantModal = () => {
     </Dialog>
   );
 };
-export default EnseignantModal;
+export default TeacherModal;

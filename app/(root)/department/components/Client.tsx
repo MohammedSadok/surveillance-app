@@ -5,17 +5,15 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
-import { DepartementType } from "@/lib/types";
+import { Department } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
 
-interface DepartementClientProps {
-  data: DepartementType[];
+interface DepartmentClientProps {
+  data: Department[];
 }
 
-export const DepartementClient: React.FC<DepartementClientProps> = ({
-  data,
-}) => {
+export const DepartmentClient: React.FC<DepartmentClientProps> = ({ data }) => {
   const { onOpen } = useModal();
 
   return (
@@ -31,9 +29,6 @@ export const DepartementClient: React.FC<DepartementClientProps> = ({
       </div>
       <Separator />
       <DataTable searchKey="nom" columns={columns} data={data} />
-      {/* <Heading title="API" description="API Calls for Departements" /> */}
-      {/* <Separator /> */}
-      {/* <ApiList entityName="Departements" entityIdName="DepartementId" /> */}
     </>
   );
 };

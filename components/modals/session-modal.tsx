@@ -46,23 +46,23 @@ const SessionModal = () => {
     resolver: zodResolver(SessionSchema),
     defaultValues: {
       type: "",
-      dateDebut: new Date(),
-      dateFin: new Date(),
+      startDate: new Date(),
+      endDate: new Date(),
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof SessionSchema>) => {
-    const formattedDateDebutString = format(values.dateDebut, "yyyy-MM-dd");
-    const formattedDateFinString = format(values.dateFin, "yyyy-MM-dd");
-    const dateDebut = new Date(formattedDateDebutString);
-    const dateFin = new Date(formattedDateFinString);
+    const formattedDateDebutString = format(values.startDate, "yyyy-MM-dd");
+    const formattedDateFinString = format(values.endDate, "yyyy-MM-dd");
+    const startDate = new Date(formattedDateDebutString);
+    const endDate = new Date(formattedDateFinString);
 
     const formattedDate = {
       type: values.type,
-      dateDebut: dateDebut,
-      dateFin: dateFin,
+      startDate: startDate,
+      endDate: endDate,
     };
     try {
       await axios.post("/api/sessions", formattedDate);
@@ -116,7 +116,7 @@ const SessionModal = () => {
 
               <FormField
                 control={form.control}
-                name="dateDebut"
+                name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
@@ -125,13 +125,7 @@ const SessionModal = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            // className={cn(
-                            //   "pl-3 text-left font-normal",
-                            //   !field.value && "text-muted-foreground"
-                            // )}
-                          >
+                          <Button variant={"outline"}>
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
@@ -157,7 +151,7 @@ const SessionModal = () => {
 
               <FormField
                 control={form.control}
-                name="dateFin"
+                name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
@@ -166,13 +160,7 @@ const SessionModal = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            // className={cn(
-                            //   "pl-3 text-left font-normal",
-                            //   !field.value && "text-muted-foreground"
-                            // )}
-                          >
+                          <Button variant={"outline"}>
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (

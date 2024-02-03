@@ -7,21 +7,21 @@ type Props = {
 
 const ExamsPage = async ({ params }: Props) => {
   console.log("=>  ExamsPage  params:", params);
-  const creneau = await db.creneau.findFirst({
+  const timeSlot = await db.timeSlot.findFirst({
     where: { id: parseInt(params.creneauId) },
-    include: { journee: true },
+    include: { day: true },
   });
-  const exams = await db.examen.findMany({
+  const exams = await db.exam.findMany({
     where: {
-      creneauId: parseInt(params.creneauId),
+      timeSlotId: parseInt(params.creneauId),
     },
     include: {
-      responsable_module: true,
+      moduleResponsible: true,
     },
   });
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <ExamClient data={exams} creneau={creneau} />
+      <ExamClient data={exams} timeSlot={timeSlot} />
     </div>
   );
 };

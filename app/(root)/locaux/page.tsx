@@ -1,13 +1,13 @@
 import db from "@/lib/prismadb";
-import { LocalClient } from "./components/Client";
+import { LocationClient } from "./components/Client";
 
-const LocalPage = async () => {
-  const locaux = await db.local.findMany();
+const LocationPage = async () => {
+  const locations = await db.location.findMany();
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <LocalClient data={locaux} />
+      <LocationClient data={locations} />
     </div>
   );
 };
 
-export default LocalPage;
+export default LocationPage;

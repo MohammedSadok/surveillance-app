@@ -29,15 +29,15 @@ export function MainNav() {
             <span>Sessions</span>
           </span>
         </Link>
-        <Link href="/departement">
+        <Link href="/department">
           <span
             className={cn(
               "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              path === "/departement" ? "bg-accent" : "transparent"
+              path === "/department" ? "bg-accent" : "transparent"
             )}
           >
             <BookOpen className="mr-2 h-4 w-4" />
-            <span>Departement</span>
+            <span>Departements</span>
           </span>
         </Link>
         <Link href="/locaux">

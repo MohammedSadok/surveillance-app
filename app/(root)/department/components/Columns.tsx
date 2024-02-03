@@ -2,17 +2,17 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { DepartementType } from "@/lib/types";
-import { CellAction } from "./CellAction";
+import { Department } from "@prisma/client";
 import Link from "next/link";
+import { CellAction } from "./CellAction";
 
-export const columns: ColumnDef<DepartementType>[] = [
+export const columns: ColumnDef<Department>[] = [
   {
     accessorKey: "nom",
     header: "Nom",
     cell: ({ row }) => (
-      <Link href={`/departement/${row.original.id}`} className="underline">
-        {row.original.nom}
+      <Link href={`/department/${row.original.id}`} className="underline">
+        {row.original.name}
       </Link>
     ),
   },

@@ -1,9 +1,9 @@
 import {
-  Departement,
-  Enseignant,
-  Examen,
-  Local,
+  Department,
+  Exam,
+  Location,
   SessionExam,
+  Teacher,
 } from "@prisma/client";
 import { create } from "zustand";
 
@@ -20,11 +20,11 @@ export type ModalType =
 
 interface ModalData {
   session?: SessionExam;
-  departement?: Departement;
-  departements?: Departement[];
-  building?: Local;
-  teacher?: Enseignant;
-  exam?: Examen;
+  department?: Department;
+  departments?: Department[];
+  building?: Location;
+  teacher?: Teacher;
+  exam?: Exam;
   apiUrl?: string;
   query?: Record<string, any>;
 }

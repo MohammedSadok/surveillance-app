@@ -10,8 +10,8 @@ const SessionsPage = async () => {
 
   const formattedSessions: SessionColum[] = sessions.map((item) => ({
     ...item,
-    dateDebut: format(item.dateDebut, "MMMM do, yyyy"),
-    dateFin: format(item.dateFin, "MMMM do, yyyy"),
+    startDate: format(item.startDate, "MMMM do, yyyy"),
+    endDate: format(item.endDate, "MMMM do, yyyy"),
   }));
   return (
     <div className="flex-1 space-y-4 pt-2">

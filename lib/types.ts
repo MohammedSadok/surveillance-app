@@ -1,14 +1,10 @@
-import { Departement, Enseignant } from "@prisma/client";
+import { Day, Department, Exam, Teacher, TimeSlot } from "@prisma/client";
 
-export type EnseignantType = Enseignant & { departement: Departement };
-export type DepartementType = {
-  id: string;
-  nom: string;
+export type TeacherType = Teacher & { department: Department };
+
+export type sessionDays = Pick<Day, "id" | "sessionExamId"> & {
+  date: string;
+  timeSlot: (TimeSlot & { Exam: Exam[] })[];
 };
 
-export type FiliereType = {
-  id: string;
-  nom: string;
-  departementId: string;
-  departement: DepartementType;
-};
+export type timeSlotType = TimeSlot & { day: Day[] };

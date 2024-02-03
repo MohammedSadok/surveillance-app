@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useModal } from "@/hooks/useModalStore";
-import { LocalSchema } from "@/lib/validator";
+import { LocationSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -33,24 +33,22 @@ const LocalModal = () => {
     isOpen && (type === "createBuilding" || type === "updateBuilding");
 
   const form = useForm({
-    resolver: zodResolver(LocalSchema),
+    resolver: zodResolver(LocationSchema),
     defaultValues: {
-      nom: "",
-      emplacement: "",
-      taille: 0,
+      name: "",
+      size: 0,
     },
   });
 
   useEffect(() => {
     if (building) {
-      form.setValue("nom", building.nom);
-      form.setValue("emplacement", building.emplacement);
-      form.setValue("taille", building.taille);
+      form.setValue("name", building.name);
+      form.setValue("size", building.size);
     }
   }, [building, form]);
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof LocalSchema>) => {
+  const onSubmit = async (values: z.infer<typeof LocationSchema>) => {
     try {
       if (type === "createBuilding") await axios.post("/api/locaux", values);
       else await axios.patch(`/api/locaux/${building?.id}`, values);
@@ -79,14 +77,14 @@ const LocalModal = () => {
             <div className="px-6 space-y-4">
               <FormField
                 control={form.control}
-                name="nom"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nom </FormLabel>
                     <Input
                       {...field}
                       disabled={isLoading}
-                      placeholder="Entrez le nom du Local"
+                      placeholder="Entrez le name du Local"
                     />
                     <FormMessage />
                   </FormItem>
@@ -94,28 +92,13 @@ const LocalModal = () => {
               />
               <FormField
                 control={form.control}
-                name="emplacement"
+                name="size"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>L'emplacement</FormLabel>
-                    <Input
-                      {...field}
-                      disabled={isLoading}
-                      placeholder="Entrez l'emplacement"
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="taille"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>La taille</FormLabel>
+                    <FormLabel>La size</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez la taille"
+                      placeholder="Entrez la size"
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value, 10) || 0)
                       }

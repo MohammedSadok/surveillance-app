@@ -2,30 +2,30 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { EnseignantType } from "@/lib/types";
+import { Teacher } from "@prisma/client";
 import { CellAction } from "./CellAction";
-export const columns: ColumnDef<EnseignantType>[] = [
+export const columns: ColumnDef<Teacher>[] = [
   {
-    accessorKey: "nom",
+    accessorKey: "lastName",
     header: "Nom",
   },
   {
-    accessorKey: "prenom",
+    accessorKey: "firstName",
     header: "Prenom",
   },
   {
-    accessorKey: "numero_tel",
+    accessorKey: "phoneNumber",
     header: "Numero tel",
   },
   {
-    accessorKey: "e_mail",
+    accessorKey: "email",
     header: "Email",
   },
-  {
-    accessorKey: "Department",
-    header: "department",
-    cell: ({ row }) => row.original.departement.nom,
-  },
+  // {
+  //   accessorKey: "Department",
+  //   header: "department",
+  //   cell: ({ row }) => row.original.department,
+  // },
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

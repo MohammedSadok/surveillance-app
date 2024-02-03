@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "@/hooks/useModalStore";
-import { Departement } from "@prisma/client";
+import { Department } from "@prisma/client";
 
 interface CellActionProps {
-  data: Departement;
+  data: Department;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -62,7 +62,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => onOpen("updateDepartment", { departement: data })}
+            onClick={() => onOpen("updateDepartment", { department: data })}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

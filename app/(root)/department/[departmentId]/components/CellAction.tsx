@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "@/hooks/useModalStore";
-import { EnseignantType } from "@/lib/types";
+import { Teacher } from "@prisma/client";
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface CellActionProps {
-  data: EnseignantType;
+  data: Teacher;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -30,7 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/enseignant/${data.id}`);
+      await axios.delete(`/api/teacher/${data.id}`);
       toast.success("Billboard deleted.");
       router.refresh();
     } catch (error) {
