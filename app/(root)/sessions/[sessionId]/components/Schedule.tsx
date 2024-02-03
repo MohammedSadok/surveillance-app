@@ -52,7 +52,7 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
         <TableHeader>
           <TableRow>
             <TableCell className="border text-center" rowSpan={2}>
-              Days
+              Jours
             </TableCell>
             {days.map((dayItem, index) => (
               <React.Fragment key={index}>
@@ -89,7 +89,6 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
                 <TableCell key={timeSlotItem.id} className="border text-center">
                   <Link href={`/sessions/${sessionId}/${timeSlotItem.id} `}>
                     <Button className="" variant="ghost">
-                      {/* */}
                       <PlusCircle />
                     </Button>
                   </Link>

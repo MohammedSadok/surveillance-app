@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+
 type SessionType = "Normale" | "Rattrapage";
 
 const SessionModal = () => {
@@ -64,6 +65,7 @@ const SessionModal = () => {
       startDate: startDate,
       endDate: endDate,
     };
+
     try {
       await axios.post("/api/sessions", formattedDate);
       form.reset();
@@ -73,6 +75,7 @@ const SessionModal = () => {
       console.log(error);
     }
   };
+
   const handleClose = () => {
     form.reset();
     onClose();
@@ -101,7 +104,7 @@ const SessionModal = () => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selectionner le type de session" />
+                          <SelectValue placeholder="Sélectionner le type de session" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -193,4 +196,5 @@ const SessionModal = () => {
     </Dialog>
   );
 };
+
 export default SessionModal;

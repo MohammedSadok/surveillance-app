@@ -1,4 +1,4 @@
-import db from "@/lib/prismadb";
+import db from "@/lib/db";
 import { TeacherClient } from "./components/Client";
 interface TeacherPageProps {
   params: { departmentId: string };

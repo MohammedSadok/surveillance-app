@@ -1,9 +1,8 @@
 import { Heading } from "@/components/ui/heading";
-import db from "@/lib/prismadb";
-import { Day, Exam, TimeSlot } from "@prisma/client";
+import db from "@/lib/db";
+import { sessionDays } from "@/lib/types";
 import { format } from "date-fns";
 import Schedule from "./components/Schedule";
-import { sessionDays } from "@/lib/types";
 
 interface ExamsPageProps {
   params: { sessionId: string };
@@ -11,7 +10,7 @@ interface ExamsPageProps {
 const ExamsPage = async ({ params }: ExamsPageProps) => {
   const id = parseInt(params.sessionId);
 
-  const days = await db.day.findMany({
+  const jours = await db.day.findMany({
     where: {
       sessionExamId: id,
     },
@@ -26,7 +25,7 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
       },
     },
   });
-  const formattedDays: sessionDays[] = days.map((item) => ({
+  const joursFormates: sessionDays[] = jours.map((item) => ({
     ...item,
     date: format(item.date, "dd/MM/yyyy"),
   }));
@@ -35,11 +34,11 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
     <div className="flex-1 space-y-4 pt-2">
       <div className="flex items-center justify-between">
         <Heading
-          title={`Journee (${days.length})`}
-          description="Manage Journee"
+          title={`Journées (${jours.length})`}
+          description="Gérer les journées"
         />
       </div>
-      <Schedule sessionDays={formattedDays} sessionId={params.sessionId} />
+      <Schedule sessionDays={joursFormates} sessionId={params.sessionId} />
     </div>
   );
 };

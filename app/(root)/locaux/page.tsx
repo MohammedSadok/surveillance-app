@@ -1,4 +1,4 @@
-import db from "@/lib/prismadb";
+import db from "@/lib/db";
 import { LocationClient } from "./components/Client";
 
 const LocationPage = async () => {

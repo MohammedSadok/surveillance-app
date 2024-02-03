@@ -1,4 +1,4 @@
-import db from "@/lib/prismadb";
+import db from "@/lib/db";
 import { LocationSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 

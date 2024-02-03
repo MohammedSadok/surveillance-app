@@ -5,12 +5,12 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
-import { Teacher } from "@prisma/client";
+import { TeacherType } from "@/lib/types";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
 
 interface TeacherClientProps {
-  data: Teacher[];
+  data: TeacherType[];
 }
 
 export const TeacherClient: React.FC<TeacherClientProps> = ({ data }) => {
@@ -20,15 +20,15 @@ export const TeacherClient: React.FC<TeacherClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Teachers (${data.length})`}
-          description="Manage Teachers"
+          title={`Enseignants (${data.length})`}
+          description="Gérer les enseignants"
         />
         <Button onClick={() => onOpen("createTeacher")}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Ajouter un nouvel enseignant
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="nom" columns={columns} data={data} />
+      <DataTable searchKey="lastName" columns={columns} data={data} />
     </>
   );
 };

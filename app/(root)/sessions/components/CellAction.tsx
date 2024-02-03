@@ -15,11 +15,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { SessionColum } from "./Columns";
+import { SessionExam } from "@prisma/client";
 
 interface CellActionProps {
-  data: SessionColum;
+  data: SessionExam;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -32,11 +31,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     try {
       setLoading(true);
       await axios.delete(`/api/sessions/${data.id}`);
-      toast.success("Session deleted.");
+      toast.success("Session supprimée.");
       router.refresh();
     } catch (error) {
       toast.error(
-        "Make sure you removed all categories using this billboard first."
+        "Assurez-vous d'avoir d'abord supprimé toutes les jours de cette session."
       );
     } finally {
       setOpen(false);
@@ -55,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">Ouvrir le menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -63,13 +62,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
+              router.push(`/${params.storeId}/panneaux/${data.id}`)
             }
           >
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> Mettre à jour
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
+            <Trash className="mr-2 h-4 w-4" /> Supprimer
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

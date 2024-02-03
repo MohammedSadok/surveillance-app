@@ -1,10 +1,6 @@
 import "@/app/globals.css";
-import { MainNav } from "@/components/main-navigation";
-import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
-import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { ToastProvider } from "@/providers/toast-provider";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 export const metadata: Metadata = {
@@ -26,12 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "h-screen bg-background font-sans antialiased w-screen",
           fontSans.variable
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex min-h-screen flex-col space-y-6">
+          {/* <div className="flex min-h-screen flex-col space-y-6">
             <header className="sticky top-0 z-40 border-b bg-background">
               <div className="container flex h-16 items-center justify-between py-4">
                 <MainNav />
@@ -43,10 +39,9 @@ export default function RootLayout({
             <main className="flex w-full flex-1 flex-col overflow-hidden container">
               <ToastProvider />
               <ModalProvider />
-              {children}
-              {/* <ModalProvider /> */}
             </main>
-          </div>
+          </div> */}
+          {children}
         </ThemeProvider>
       </body>
     </html>

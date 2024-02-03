@@ -1,16 +1,11 @@
 "use client";
+import { SessionExam } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import Link from "next/link";
 import { CellAction } from "./CellAction";
-
-export type SessionColum = {
-  id: number;
-  type: string;
-  startDate: string;
-  endDate: string;
-};
-
-export const columns: ColumnDef<SessionColum>[] = [
+// format(item.startDate, "MMMM do, yyyy")
+export const columns: ColumnDef<SessionExam>[] = [
   {
     accessorKey: "type",
     header: "Type",
@@ -24,10 +19,12 @@ export const columns: ColumnDef<SessionColum>[] = [
   {
     accessorKey: "startDate",
     header: "Date de Debut",
+    cell: ({ row }) => format(row.original.startDate, "MMMM do, yyyy"),
   },
   {
     accessorKey: "endDate",
     header: "Date de Fin",
+    cell: ({ row }) => format(row.original.endDate, "MMMM do, yyyy"),
   },
   {
     id: "actions",

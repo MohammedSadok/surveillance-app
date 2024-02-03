@@ -1,7 +1,7 @@
 "use client";
 
 import DepartementModal from "@/components/modals/departement-modal";
-import EnseignantModal from "@/components/modals/enseignant-modal";
+import EnseignantModal from "@/components/modals/teacher-modal";
 import ExamModal from "@/components/modals/exam-modal";
 import LocalModal from "@/components/modals/local-modal";
 import SessionModal from "@/components/modals/session-modal";

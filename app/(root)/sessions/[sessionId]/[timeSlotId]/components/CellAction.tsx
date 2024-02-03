@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useModal } from "@/hooks/useModalStore";
-import { ExamColum } from "./Columns";
+import { ExamType } from "@/lib/types";
 
 interface CellActionProps {
-  data: ExamColum;
+  data: ExamType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -33,12 +33,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     try {
       setLoading(true);
       await axios.delete(`/api/exams/${data.id}`);
-      toast.success("Exam deleted.");
+      toast.success("Examen supprimé.");
       router.refresh();
     } catch (error) {
-      toast.error(
-        "Make sure you removed all categories using this billboard first."
-      );
+      toast.error("Assurez-vous d'avoir d'abord supprimé tous .");
     } finally {
       setOpen(false);
       setLoading(false);
@@ -56,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">Ouvrir le menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -65,10 +63,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             onClick={() => onOpen("updateExam", { exam: data })}
           >
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> Mettre à jour
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
+            <Trash className="mr-2 h-4 w-4" /> Supprimer
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

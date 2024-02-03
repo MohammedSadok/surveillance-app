@@ -1,5 +1,5 @@
 import { days } from "@/constants";
-import db from "@/lib/prismadb";
+import db from "@/lib/db";
 import { SessionSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";

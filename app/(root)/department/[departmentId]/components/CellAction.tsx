@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useModal } from "@/hooks/useModalStore";
-import { Teacher } from "@prisma/client";
+import { TeacherType } from "@/lib/types";
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface CellActionProps {
-  data: Teacher;
+  data: TeacherType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -31,11 +31,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     try {
       setLoading(true);
       await axios.delete(`/api/teacher/${data.id}`);
-      toast.success("Billboard deleted.");
+      toast.success("Enseignant supprimé.");
       router.refresh();
     } catch (error) {
       toast.error(
-        "Make sure you removed all categories using this billboard first."
+        "Assurez-vous d'avoir supprimé toutes les catégories utilisant cet enseignant d'abord."
       );
     } finally {
       setOpen(false);
@@ -54,7 +54,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">Ouvrir le menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -63,10 +63,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuItem
             onClick={() => onOpen("updateTeacher", { teacher: data })}
           >
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> Modifier
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
+            <Trash className="mr-2 h-4 w-4" /> Supprimer
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

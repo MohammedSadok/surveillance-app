@@ -18,15 +18,15 @@ export const LocationClient: React.FC<LocationClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Locations (${data.length})`}
-          description="Manage Locations"
+          title={`Emplacements (${data.length})`}
+          description="Gérer les emplacements"
         />
         <Button onClick={() => onOpen("createBuilding")}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Ajouter un nouveau local
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="nom" columns={columns} data={data} />
+      <DataTable searchKey="name" columns={columns} data={data} />
     </>
   );
 };

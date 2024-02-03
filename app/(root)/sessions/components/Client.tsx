@@ -6,10 +6,11 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
 import { Plus } from "lucide-react";
-import { SessionColum, columns } from "./Columns";
+import { columns } from "./Columns";
+import { SessionExam } from "@prisma/client";
 
 interface SessionClientProps {
-  data: SessionColum[];
+  data: SessionExam[];
 }
 
 export const SessionClient: React.FC<SessionClientProps> = ({ data }) => {
@@ -19,10 +20,10 @@ export const SessionClient: React.FC<SessionClientProps> = ({ data }) => {
       <div className="flex items-center justify-between">
         <Heading
           title={`Sessions (${data.length})`}
-          description="Manage Sessions"
+          description="Gérer les sessions"
         />
         <Button onClick={() => onOpen("createSession")}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Ajouter une nouvelle session
         </Button>
       </div>
       <Separator />

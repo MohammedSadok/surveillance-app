@@ -62,7 +62,10 @@ const ExamModal = () => {
         );
         setDepartments(response.data);
       } catch (error) {
-        console.error("Error fetching departments:", error);
+        console.error(
+          "Erreur lors de la récupération des départements :",
+          error
+        );
       }
     };
     fetchData();
@@ -78,7 +81,10 @@ const ExamModal = () => {
           setTeachers(response.data);
         }
       } catch (error) {
-        console.error("Error fetching teachers:", error);
+        console.error(
+          "Erreur lors de la récupération des enseignants :",
+          error
+        );
       }
     };
     if (department !== undefined) {
@@ -87,7 +93,7 @@ const ExamModal = () => {
     }
   }, [department]);
 
-  const params = useParams<{ creneauId: string }>();
+  const params = useParams<{ timeSlotId: string }>();
   const router = useRouter();
 
   const isModalOpen =
@@ -99,7 +105,7 @@ const ExamModal = () => {
       options: "",
       enrolledStudentsCount: 0,
       responsibleId: 0,
-      timeSlotId: parseInt(params.creneauId),
+      timeSlotId: parseInt(params.timeSlotId),
     },
   });
   useEffect(() => {
@@ -108,14 +114,14 @@ const ExamModal = () => {
       form.setValue("options", exam.options);
       form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
       form.setValue("responsibleId", exam.responsibleId);
-      form.setValue("timeSlotId", parseInt(params.creneauId));
+      form.setValue("timeSlotId", parseInt(params.timeSlotId));
     }
-  }, [exam, form, params.creneauId]);
+  }, [exam, form, params.timeSlotId]);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof ExamSchema>) => {
-    // const newValues = { ...values, creneauId: parseInt(params.creneauId) };
+    // const newValues = { ...values, timeSlotId: parseInt(params.timeSlotId) };
     try {
       if (type === "createExam") await axios.post("/api/exams", values);
       else axios.patch(`/api/exams/${exam?.id}`, values);
@@ -137,7 +143,7 @@ const ExamModal = () => {
       <DialogContent className="p-0 overflow-hidden text-black bg-white h-auto">
         <DialogHeader className="px-6 pt-4">
           <DialogTitle className="text-2xl font-bold text-center">
-            Enesignant
+            Enseignant
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -148,10 +154,10 @@ const ExamModal = () => {
                 name="moduleName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nom de Module</FormLabel>
+                    <FormLabel>Nom du module</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez le nom de Module"
+                      placeholder="Entrez le nom du module"
                       {...field}
                     />
                     <FormMessage />
@@ -163,10 +169,10 @@ const ExamModal = () => {
                 name="options"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Les Filiers</FormLabel>
+                    <FormLabel>Options</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez la liste des filieres"
+                      placeholder="Entrez la liste des filières"
                       {...field}
                     />
                     <FormMessage />
@@ -178,29 +184,28 @@ const ExamModal = () => {
                 name="enrolledStudentsCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Le nombre d'etudiants inscrit</FormLabel>
+                    <FormLabel>Nombre d'étudiants inscrits</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez le nombre d'etudiants inscrit"
+                      placeholder="Entrez le nombre d'étudiants inscrits"
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value, 10) || 0)
                       }
                       value={field.value}
-                      // {...field}
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <div className="space-y-2">
-                <FormLabel>Le responsable de module</FormLabel>
-                <div className="grid gap-2  grid-cols-10 ">
+                <FormLabel>Responsable du module</FormLabel>
+                <div className="grid gap-2 grid-cols-10">
                   <Select
                     onValueChange={(value) => setDepartment(Number(value))}
                   >
                     <FormControl>
                       <SelectTrigger className="col-span-4">
-                        <SelectValue placeholder="Selectionner le departement" />
+                        <SelectValue placeholder="Sélectionnez le département" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -221,7 +226,7 @@ const ExamModal = () => {
                             <Button
                               variant="outline"
                               role="combobox"
-                              aria-label="Load teachers..."
+                              aria-label="Charger les enseignants..."
                               aria-expanded={open}
                               className="flex-1 justify-between w-full"
                             >
@@ -229,14 +234,16 @@ const ExamModal = () => {
                                 ? selectedTeacher.firstName +
                                   " " +
                                   selectedTeacher.lastName
-                                : "Load teachers..."}
+                                : "Charger les enseignants..."}
                               <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-full p-0">
                             <Command>
-                              <CommandInput placeholder="Search teachers..." />
-                              <CommandEmpty>No teacher found.</CommandEmpty>
+                              <CommandInput placeholder="Rechercher des enseignants..." />
+                              <CommandEmpty>
+                                Aucun enseignant trouvé.
+                              </CommandEmpty>
                               <CommandGroup>
                                 <ScrollArea className="h-[200px]">
                                   {teachers?.map((teacher) => (
@@ -283,4 +290,5 @@ const ExamModal = () => {
     </Dialog>
   );
 };
+
 export default ExamModal;

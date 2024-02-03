@@ -1,14 +1,12 @@
 "use client";
-
-import { ColumnDef } from "@tanstack/react-table";
-
 import { Department } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { CellAction } from "./CellAction";
 
 export const columns: ColumnDef<Department>[] = [
   {
-    accessorKey: "nom",
+    accessorKey: "name",
     header: "Nom",
     cell: ({ row }) => (
       <Link href={`/department/${row.original.id}`} className="underline">

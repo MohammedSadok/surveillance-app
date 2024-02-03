@@ -44,6 +44,7 @@ const TeacherModal = () => {
       departmentId: 0,
     },
   });
+
   useEffect(() => {
     if (teacher) {
       form.setValue("firstName", teacher.firstName);
@@ -67,6 +68,7 @@ const TeacherModal = () => {
       console.log(error);
     }
   };
+
   const handleClose = () => {
     form.reset();
     onClose();
@@ -77,7 +79,7 @@ const TeacherModal = () => {
       <DialogContent className="p-0 overflow-hidden text-black bg-white">
         <DialogHeader className="px-6 pt-4">
           <DialogTitle className="text-2xl font-bold text-center">
-            Enesignant
+            Enseignant
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -103,10 +105,10 @@ const TeacherModal = () => {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Prenom</FormLabel>
+                    <FormLabel>Prénom</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez le prenom de l'enseignant"
+                      placeholder="Entrez le prénom de l'enseignant"
                       {...field}
                     />
                     <FormMessage />
@@ -134,10 +136,10 @@ const TeacherModal = () => {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Numero de telephone</FormLabel>
+                    <FormLabel>Numéro de téléphone</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez le numero de l'enseignant"
+                      placeholder="Entrez le numéro de l'enseignant"
                       {...field}
                     />
                     <FormMessage />
@@ -154,4 +156,5 @@ const TeacherModal = () => {
     </Dialog>
   );
 };
+
 export default TeacherModal;

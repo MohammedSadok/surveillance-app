@@ -7,4 +7,5 @@ export type sessionDays = Pick<Day, "id" | "sessionExamId"> & {
   timeSlot: (TimeSlot & { Exam: Exam[] })[];
 };
 
-export type timeSlotType = TimeSlot & { day: Day[] };
+export type timeSlotType = TimeSlot & { day: Day };
+export type ExamType = Exam & { moduleResponsible: Teacher };

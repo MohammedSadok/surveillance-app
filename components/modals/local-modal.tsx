@@ -46,12 +46,13 @@ const LocalModal = () => {
       form.setValue("size", building.size);
     }
   }, [building, form]);
+
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof LocationSchema>) => {
     try {
-      if (type === "createBuilding") await axios.post("/api/locaux", values);
-      else await axios.patch(`/api/locaux/${building?.id}`, values);
+      if (type === "createBuilding") await axios.post("/api/location", values);
+      else await axios.patch(`/api/location/${building?.id}`, values);
       form.reset();
       router.refresh();
       onClose();
@@ -59,6 +60,7 @@ const LocalModal = () => {
       console.log(error);
     }
   };
+
   const handleClose = () => {
     form.reset();
     onClose();
@@ -80,11 +82,11 @@ const LocalModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nom </FormLabel>
+                    <FormLabel>Nom</FormLabel>
                     <Input
                       {...field}
                       disabled={isLoading}
-                      placeholder="Entrez le name du Local"
+                      placeholder="Entrez le nom du local"
                     />
                     <FormMessage />
                   </FormItem>
@@ -95,10 +97,10 @@ const LocalModal = () => {
                 name="size"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>La size</FormLabel>
+                    <FormLabel>Taille</FormLabel>
                     <Input
                       disabled={isLoading}
-                      placeholder="Entrez la size"
+                      placeholder="Entrez la taille"
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value, 10) || 0)
                       }
@@ -118,4 +120,5 @@ const LocalModal = () => {
     </Dialog>
   );
 };
+
 export default LocalModal;
