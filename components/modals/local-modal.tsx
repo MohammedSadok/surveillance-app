@@ -20,15 +20,17 @@ import { LocalSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
 
 const LocalModal = () => {
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
+  const { building } = data;
   const router = useRouter();
-
-  const isModalOpen = isOpen && type === "createLocal";
+  const isModalOpen =
+    isOpen && (type === "createBuilding" || type === "updateBuilding");
 
   const form = useForm({
     resolver: zodResolver(LocalSchema),
@@ -39,11 +41,19 @@ const LocalModal = () => {
     },
   });
 
+  useEffect(() => {
+    if (building) {
+      form.setValue("nom", building.nom);
+      form.setValue("emplacement", building.emplacement);
+      form.setValue("taille", building.taille);
+    }
+  }, [building, form]);
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof LocalSchema>) => {
     try {
-      await axios.post("/api/locaux", values);
+      if (type === "createBuilding") await axios.post("/api/locaux", values);
+      else await axios.patch(`/api/locaux/${building?.id}`, values);
       form.reset();
       router.refresh();
       onClose();
@@ -74,9 +84,9 @@ const LocalModal = () => {
                   <FormItem>
                     <FormLabel>Nom </FormLabel>
                     <Input
+                      {...field}
                       disabled={isLoading}
                       placeholder="Entrez le nom du Local"
-                      {...field}
                     />
                     <FormMessage />
                   </FormItem>
@@ -89,9 +99,9 @@ const LocalModal = () => {
                   <FormItem>
                     <FormLabel>L'emplacement</FormLabel>
                     <Input
+                      {...field}
                       disabled={isLoading}
                       placeholder="Entrez l'emplacement"
-                      {...field}
                     />
                     <FormMessage />
                   </FormItem>

@@ -13,10 +13,10 @@ const TeacherPage = async ({ params }: TeacherPageProps) => {
       departement: true,
     },
   });
-  const departement = await db.departement.findMany();
+
   return (
     <div className="flex-1 space-y-4 pt-2">
-      <EnseignantClient data={enseignants} departements={departement} />
+      <EnseignantClient data={enseignants} />
     </div>
   );
 };

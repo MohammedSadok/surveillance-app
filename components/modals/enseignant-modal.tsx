@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -20,24 +19,21 @@ import { useModal } from "@/hooks/useModalStore";
 import { EnseignantSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 
 const EnseignantModal = () => {
   const { isOpen, onClose, type, data } = useModal();
+  const params = useParams();
   const router = useRouter();
-  const { departements } = data;
+  const { teacher } = data;
 
-  const isModalOpen = isOpen && type === "createEnseignant";
+  const isModalOpen =
+    isOpen && (type === "createTeacher" || type === "updateTeacher");
+
   const form = useForm({
     resolver: zodResolver(EnseignantSchema),
     defaultValues: {
@@ -48,12 +44,22 @@ const EnseignantModal = () => {
       departementId: 0,
     },
   });
+  useEffect(() => {
+    if (teacher) {
+      form.setValue("nom", teacher.nom);
+      form.setValue("prenom", teacher.prenom);
+      form.setValue("departementId", teacher.departementId);
+      form.setValue("e_mail", teacher.e_mail);
+      form.setValue("numero_tel", teacher.numero_tel);
+    } else form.setValue("departementId", parseInt(params.departementId));
+  }, [teacher, form, params.departementId]);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof EnseignantSchema>) => {
     try {
-      await axios.post("/api/enseignant", values);
+      if (type === "createTeacher") await axios.post("/api/enseignant", values);
+      else await axios.patch(`/api/enseignant/${teacher?.id}`, values);
       form.reset();
       router.refresh();
       onClose();
@@ -138,7 +144,7 @@ const EnseignantModal = () => {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="departementId"
                 render={({ field }) => (
@@ -164,7 +170,7 @@ const EnseignantModal = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
             <DialogFooter className="px-6 py-4 bg-gray-100">
               <Button disabled={isLoading}>Créer</Button>

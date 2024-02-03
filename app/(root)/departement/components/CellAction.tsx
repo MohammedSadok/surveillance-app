@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -15,22 +15,23 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DepartementType } from "@/lib/types";
+import { useModal } from "@/hooks/useModalStore";
+import { Departement } from "@prisma/client";
 
 interface CellActionProps {
-  data: DepartementType;
+  data: Departement;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
-  const params = useParams();
+  const { onOpen } = useModal();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/departements/${data.id}`);
+      await axios.delete(`/api/departments/${data.id}`);
       toast.success("Billboard deleted.");
       router.refresh();
     } catch (error) {
@@ -61,9 +62,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
-            }
+            onClick={() => onOpen("updateDepartment", { departement: data })}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

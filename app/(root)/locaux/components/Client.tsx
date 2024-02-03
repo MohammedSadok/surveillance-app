@@ -21,7 +21,7 @@ export const LocalClient: React.FC<LocalClientProps> = ({ data }) => {
           title={`Locals (${data.length})`}
           description="Manage Locals"
         />
-        <Button onClick={() => onOpen("createLocal")}>
+        <Button onClick={() => onOpen("createBuilding")}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>

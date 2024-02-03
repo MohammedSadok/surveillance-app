@@ -20,15 +20,18 @@ import { DepartementSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
 
 const DepartementModal = () => {
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
+  const { departement } = data;
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === "createDepartment";
+  const isModalOpen =
+    isOpen && (type === "createDepartment" || type === "updateDepartment");
 
   const form = useForm({
     resolver: zodResolver(DepartementSchema),
@@ -36,12 +39,18 @@ const DepartementModal = () => {
       nom: "",
     },
   });
-
+  useEffect(() => {
+    if (departement) {
+      form.setValue("nom", departement.nom);
+    }
+  }, [departement, form]);
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof DepartementSchema>) => {
     try {
-      await axios.post("/api/departements", values);
+      if (type === "createDepartment")
+        await axios.post("/api/departments", values);
+      else await axios.patch(`/api/departments/${departement?.id}`, values);
       form.reset();
       router.refresh();
       onClose();

@@ -47,16 +47,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const ExamModal = () => {
   const { isOpen, onClose, type, data } = useModal();
+  const { exam } = data;
   const [departments, setDepartments] = useState<Departement[]>([]);
   const [department, setDepartment] = useState<number | null>(null);
   const [teachers, setTeachers] = useState<Enseignant[] | undefined>();
   const [open, setOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Enseignant | null>();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/departements"
+          "http://localhost:3000/api/departments"
         );
         setDepartments(response.data);
       } catch (error) {
@@ -71,7 +73,7 @@ const ExamModal = () => {
       try {
         if (department !== null) {
           const response = await axios.get(
-            `http://localhost:3000/api/departements/${department}`
+            `http://localhost:3000/api/departments/${department}`
           );
           setTeachers(response.data);
         }
@@ -84,10 +86,12 @@ const ExamModal = () => {
       setSelectedTeacher(null);
     }
   }, [department]);
+
   const params = useParams<{ creneauId: string }>();
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === "createExam";
+  const isModalOpen =
+    isOpen && (type === "createExam" || type === "updateExam");
   const form = useForm({
     resolver: zodResolver(ExamSchema),
     defaultValues: {
@@ -98,14 +102,25 @@ const ExamModal = () => {
       creneauId: parseInt(params.creneauId),
     },
   });
+  useEffect(() => {
+    if (exam) {
+      form.setValue("nomDeModule", exam.nomDeModule);
+      form.setValue("filiers", exam.filieres);
+      form.setValue("studentsNumber", exam.nombreDetudiantInscrit);
+      form.setValue("responsible", exam.enseignantId);
+      form.setValue("creneauId", parseInt(params.creneauId));
+    }
+  }, [exam, form, params.creneauId]);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof ExamSchema>) => {
-    const newValues = { ...values, creneauId: parseInt(params.creneauId) };
+    // const newValues = { ...values, creneauId: parseInt(params.creneauId) };
     try {
-      await axios.post("/api/exams", newValues);
+      if (type === "createExam") await axios.post("/api/exams", values);
+      else axios.patch(`/api/exams/${exam?.id}`, values);
       form.reset();
+      setSelectedTeacher(null);
       router.refresh();
       onClose();
     } catch (error) {

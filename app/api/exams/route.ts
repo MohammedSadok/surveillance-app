@@ -82,7 +82,7 @@ export async function POST(req: Request) {
           filieres: filiers,
           nombreDetudiantInscrit: studentsNumber,
           nomDeModule: nomDeModule,
-          creneauId: creneauId,
+          creneauId,
           enseignantId: responsible,
         },
       });

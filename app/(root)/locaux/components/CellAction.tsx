@@ -9,10 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useModal } from "@/hooks/useModalStore";
 import { Local } from "@prisma/client";
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -21,8 +22,8 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+  const { onOpen } = useModal();
   const router = useRouter();
-  const params = useParams();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -60,9 +61,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
-            }
+            onClick={() => onOpen("updateBuilding", { building: data })}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>

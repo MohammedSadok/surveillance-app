@@ -6,19 +6,14 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
 import { EnseignantType } from "@/lib/types";
-import { Departement } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
 
 interface EnseignantClientProps {
   data: EnseignantType[];
-  departements: Departement[];
 }
 
-export const EnseignantClient: React.FC<EnseignantClientProps> = ({
-  data,
-  departements,
-}) => {
+export const EnseignantClient: React.FC<EnseignantClientProps> = ({ data }) => {
   const { onOpen } = useModal();
 
   return (
@@ -28,7 +23,7 @@ export const EnseignantClient: React.FC<EnseignantClientProps> = ({
           title={`Enseignants (${data.length})`}
           description="Manage Enseignants"
         />
-        <Button onClick={() => onOpen("createEnseignant", { departements })}>
+        <Button onClick={() => onOpen("createTeacher")}>
           <Plus className="mr-2 h-4 w-4" /> Add New
         </Button>
       </div>

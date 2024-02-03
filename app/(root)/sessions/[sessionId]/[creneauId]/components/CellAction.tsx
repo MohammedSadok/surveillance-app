@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useModal } from "@/hooks/useModalStore";
 import { ExamColum } from "./Columns";
 
 interface CellActionProps {
@@ -24,7 +25,7 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
-  const params = useParams();
+  const { onOpen } = useModal();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -62,9 +63,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
-            }
+            onClick={() => onOpen("updateExam", { exam: data })}
           >
             <Edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
