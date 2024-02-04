@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 import scheduleImage from "@/assets/images/schedule.png";
-import LoginForm from "@/components/auth/login-form";
+import RegisterForm from "@/components/auth/register-form";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "next/image";
 export const metadata: Metadata = {
@@ -64,7 +64,7 @@ export default function AuthenticationPage() {
               Entrez votre adresse e-mail ci-dessous pour créer votre compte
             </p>
           </div>
-          <LoginForm />
+          <RegisterForm />
         </div>
       </div>
     </div>

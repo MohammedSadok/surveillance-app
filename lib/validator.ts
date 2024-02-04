@@ -62,3 +62,24 @@ export const ExamSchema = z.object({
     message: "L'identifiant de l'intervalle de temps est requis.",
   }),
 });
+
+export const LoginSchema = z.object({
+  email: z.string().email({
+    message: "L'adresse e-mail est requise",
+  }),
+  password: z.string().min(1, {
+    message: "Le mot de passe est requis",
+  }),
+});
+
+export const RegisterSchema = z.object({
+  email: z.string().email({
+    message: "L'adresse e-mail est requise",
+  }),
+  password: z.string().min(6, {
+    message: "Au moins 6 caractères sont requis",
+  }),
+  name: z.string().min(1, {
+    message: "Le nom est requis",
+  }),
+});
