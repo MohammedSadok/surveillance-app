@@ -42,6 +42,15 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model VerificationToken {
+  id      Int      @id @default(autoincrement())
+  email   String   @db.VarChar(100)
+  token   String   @unique @db.VarChar(100)
+  expires DateTime
+
+  @@unique([email, token])
+}
+
 model SessionExam {
   id        Int      @id @default(autoincrement())
   type      String

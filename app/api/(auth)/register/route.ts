@@ -1,5 +1,7 @@
 import { getUserByEmail } from "@/data/user";
 import db from "@/lib/db";
+import { sendVerificationEmail } from "@/lib/mail";
+import { generateVerificationToken } from "@/lib/tokens";
 import { RegisterSchema } from "@/lib/validator";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
@@ -19,7 +21,13 @@ export async function POST(req: Request) {
       data: { email, name, password: hashedPassword },
     });
 
-    return NextResponse.json({ success: "User Created" });
+    const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
+
+    return NextResponse.json({ success: "Confirmation email send" });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: "Invalid fields" });

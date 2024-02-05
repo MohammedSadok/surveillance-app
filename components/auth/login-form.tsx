@@ -30,6 +30,10 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use with google provider"
+      : "";
   const signIdWithGoogle = () => {
     signIn("google", {
       callbackUrl: DEFAULT_LOGIN_REDIRECT,
@@ -51,12 +55,10 @@ const LoginForm = () => {
     try {
       const response = await axios.post("/api/login", values);
       if (response.data?.error) {
-        // form.reset();
         setError(response.data.error);
       }
       if (response.data?.success) {
         setSuccess(response.data.success);
-        router.refresh();
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -105,7 +107,7 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <FormError message={error} />
+          <FormError message={error || urlError} />
           <FormSuccess message={success} />
           <Button disabled={isLoading} className="w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
