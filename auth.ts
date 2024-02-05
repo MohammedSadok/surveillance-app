@@ -27,22 +27,22 @@ export const {
 } = NextAuth({
   pages: {
     signIn: "/login",
-    // error: "/auth/error",
+    error: "/error",
   },
-  // events: {
-  //   async linkAccount({ user }) {
-  //     await db.user.update({
-  //       where: { id: user.id },
-  //       data: { emailVerified: new Date() },
-  //     });
-  //   },
-  // },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: parseInt(user.id as string) },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
       if (account?.provider !== "credentials") return true;
 
-      const existingUser = await getUserById(parseInt(user.id as string, 10));
+      const existingUser = await getUserById(parseInt(user.id as string));
 
       // // Prevent sign in without email verification
       // if (!existingUser?.emailVerified) return false;
