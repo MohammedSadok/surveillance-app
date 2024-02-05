@@ -209,11 +209,12 @@ const ExamModal = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {departments?.map((item) => (
-                        <SelectItem value={item.id.toString()} key={item.id}>
-                          {item.name}
-                        </SelectItem>
-                      ))}
+                      {departments?.length > 0 &&
+                        departments.map((item) => (
+                          <SelectItem value={item.id.toString()} key={item.id}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormField

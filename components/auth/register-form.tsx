@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RegisterSchema } from "@/lib/validator";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
@@ -25,7 +27,14 @@ import { FormSuccess } from "./form-success";
 const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
+  const signIdWithGoogle = () => {
+    signIn("google", {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
+  };
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -43,13 +52,12 @@ const RegisterForm = () => {
     try {
       const response = await axios.post("/api/register", values);
       if (response.data?.error) {
-        form.reset();
+        // form.reset();
         setError(response.data.error);
       }
       if (response.data?.success) {
-        form.reset();
+        // form.reset();
         setSuccess(response.data.success);
-        router.push("/sessions");
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -140,7 +148,7 @@ const RegisterForm = () => {
         size="lg"
         className="w-full"
         variant="outline"
-        // onClick={() => onClick("google")}
+        onClick={signIdWithGoogle}
       >
         <FcGoogle className="h-5 w-5 mr-2" /> Google
       </Button>

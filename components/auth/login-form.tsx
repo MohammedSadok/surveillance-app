@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoginSchema } from "@/lib/validator";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
@@ -26,6 +28,13 @@ const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const signIdWithGoogle = () => {
+    signIn("google", {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
+  };
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -42,13 +51,12 @@ const LoginForm = () => {
     try {
       const response = await axios.post("/api/login", values);
       if (response.data?.error) {
-        form.reset();
+        // form.reset();
         setError(response.data.error);
       }
       if (response.data?.success) {
-        form.reset();
         setSuccess(response.data.success);
-        router.push("/sessions");
+        router.refresh();
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -120,7 +128,7 @@ const LoginForm = () => {
         size="lg"
         className="w-full"
         variant="outline"
-        // onClick={() => onClick("google")}
+        onClick={signIdWithGoogle}
       >
         <FcGoogle className="h-5 w-5 mr-2" /> Google
       </Button>

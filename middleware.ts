@@ -18,23 +18,15 @@ export default auth((req) => {
   if (isApiAuthRoute) {
     return null;
   }
-
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return null;
   }
-  // if (!isLoggedIn && !isPublicRoute) {
-  //   // let callbackUrl = nextUrl.pathname;
-  //   // if (nextUrl.search) {
-  //   //   callbackUrl += nextUrl.search;
-  //   // }
-
-  //   // const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-
-  //   return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-  // }
+  if (!isLoggedIn && !isPublicRoute) {
+    return Response.redirect(new URL("/login", nextUrl));
+  }
   return null;
 });
 
@@ -84,6 +76,6 @@ export default auth((req) => {
 // });
 
 // Optionally, don't invoke Middleware on some paths
-// export const config = {
-//   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-// };
+export const config = {
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};

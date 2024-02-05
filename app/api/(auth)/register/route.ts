@@ -1,7 +1,7 @@
 import { getUserByEmail } from "@/data/user";
 import db from "@/lib/db";
 import { RegisterSchema } from "@/lib/validator";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 export async function POST(req: Request) {
