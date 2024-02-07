@@ -10,15 +10,21 @@ const freeTeachersSchema = z.object({
 export async function POST(req: Request) {
   const body = await req.json();
   const { departmentId, timeSlotId } = freeTeachersSchema.parse(body);
-  const surveillance = await db.monitoring.findMany({
-    include: {
-      teachers: true,
-      location: true,
+  const teachersWithMonitoring = await db.teacher.findMany({
+    where: {
+      monitoringLines: {
+        some: {
+          monitoring: {
+            exam: {
+              timeSlotId: timeSlotId,
+            },
+          },
+        },
+      },
     },
-    where: { exam: { timeSlotId: timeSlotId } },
   });
-  const occupiedTeacherIds = surveillance.flatMap((item) =>
-    item.teachers.map((teacher) => teacher.id)
+  const occupiedTeacherIds = teachersWithMonitoring.map(
+    (teacher) => teacher.id
   );
 
   const freeTeachers = await db.teacher.findMany({
