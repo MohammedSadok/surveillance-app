@@ -31,13 +31,6 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sessionDays.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -45,6 +38,14 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
   if (!isMounted) {
     return null;
   }
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sessionDays.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -87,7 +88,7 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
               <TableCell className="border text-center">{item.date}</TableCell>
               {item.timeSlot.map((timeSlotItem) => (
                 <TableCell key={timeSlotItem.id} className="border text-center">
-                  <Link href={`/sessions/${sessionId}/${timeSlotItem.id} `}>
+                  <Link href={`/sessions/${sessionId}/${timeSlotItem.id}`}>
                     <Button className="" variant="ghost">
                       <PlusCircle />
                     </Button>
@@ -108,7 +109,7 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
             />
           </PaginationItem>
           {Array.from(
-            { length: Math.ceil(days.length / itemsPerPage) },
+            { length: Math.ceil(sessionDays.length / itemsPerPage) },
             (_, index) => (
               <PaginationItem key={index + 1} className="hover:cursor-pointer">
                 <PaginationLink
@@ -123,7 +124,7 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
           <PaginationItem className="hover:cursor-pointer">
             <PaginationNext
               onClick={() =>
-                currentPage < Math.ceil(days.length / itemsPerPage) &&
+                currentPage < Math.ceil(sessionDays.length / itemsPerPage) &&
                 handlePageChange(currentPage + 1)
               }
             />

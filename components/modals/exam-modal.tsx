@@ -53,6 +53,8 @@ const ExamModal = () => {
   const [teachers, setTeachers] = useState<Teacher[] | undefined>();
   const [open, setOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>();
+  const params = useParams<{ timeSlotId: string }>();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,10 +77,15 @@ const ExamModal = () => {
     const fetchData = async () => {
       try {
         if (department !== null) {
-          const response = await axios.get(
-            `http://localhost:3000/api/departments/${department}`
+          const response = await axios.post(
+            `http://localhost:3000/api/monitoring`,
+
+            {
+              departmentId: department,
+              timeSlotId: parseInt(params.timeSlotId),
+            }
           );
-          setTeachers(response.data);
+          setTeachers(response.data.freeTeachers);
         }
       } catch (error) {
         console.error(
@@ -91,10 +98,7 @@ const ExamModal = () => {
       fetchData();
       setSelectedTeacher(null);
     }
-  }, [department]);
-
-  const params = useParams<{ timeSlotId: string }>();
-  const router = useRouter();
+  }, [department, isOpen, params.timeSlotId]);
 
   const isModalOpen =
     isOpen && (type === "createExam" || type === "updateExam");
@@ -114,17 +118,16 @@ const ExamModal = () => {
       form.setValue("options", exam.options);
       form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
       form.setValue("responsibleId", exam.responsibleId);
-      form.setValue("timeSlotId", parseInt(params.timeSlotId));
     }
-  }, [exam, form, params.timeSlotId]);
+  }, [exam, form]);
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof ExamSchema>) => {
-    // const newValues = { ...values, timeSlotId: parseInt(params.timeSlotId) };
+    const newValues = { ...values, timeSlotId: parseInt(params.timeSlotId) };
     try {
-      if (type === "createExam") await axios.post("/api/exams", values);
-      else axios.patch(`/api/exams/${exam?.id}`, values);
+      if (type === "createExam") await axios.post("/api/exams", newValues);
+      else axios.patch(`/api/exams/${exam?.id}`, newValues);
       form.reset();
       setSelectedTeacher(null);
       router.refresh();
@@ -143,7 +146,7 @@ const ExamModal = () => {
       <DialogContent className="p-0 overflow-hidden text-black bg-white h-auto">
         <DialogHeader className="px-6 pt-4">
           <DialogTitle className="text-2xl font-bold text-center">
-            Enseignant
+            Exam
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -209,12 +212,11 @@ const ExamModal = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {departments?.length > 0 &&
-                        departments.map((item) => (
-                          <SelectItem value={item.id.toString()} key={item.id}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
+                      {departments.map((item) => (
+                        <SelectItem value={item.id.toString()} key={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormField

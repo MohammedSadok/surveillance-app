@@ -88,8 +88,20 @@ export async function POST(req: Request) {
         responsibleId,
         enrolledStudentsCount,
         timeSlotId,
+        Monitoring: { createMany: { data: [] } },
       },
     });
+    const teacher = await db.teacher.findFirst({
+      where: { id: responsibleId },
+    });
+    if (teacher) {
+      const monitoring = await db.monitoring.create({
+        data: {
+          teachers: { connect: { id: teacher.id } },
+          exam: { connect: { id: exam.id } },
+        },
+      });
+    }
 
     return NextResponse.json(exam);
   } catch (error) {

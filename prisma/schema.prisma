@@ -62,7 +62,7 @@ model SessionExam {
 model Day {
   id            Int         @id @default(autoincrement())
   date          DateTime    @db.Date()
-  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id], onDelete: Cascade)
+  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sessionExamId Int
   timeSlot      TimeSlot[]
 }
@@ -72,8 +72,14 @@ model TimeSlot {
   startTime String
   endTime   String
   dayId     Int
-  day       Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  day       Day    @relation(fields: [dayId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Exam      Exam[]
+}
+
+model Department {
+  id       Int       @id @default(autoincrement())
+  name     String
+  Teachers Teacher[]
 }
 
 model Exam {
@@ -83,43 +89,44 @@ model Exam {
   enrolledStudentsCount Int
 
   timeSlotId        Int
-  responsibleId     Int     @unique
-  moduleResponsible Teacher @relation(fields: [responsibleId], references: [id], onDelete: Cascade)
-
-  Monitoring Monitoring[]
-  TimeSlot   TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
-}
-
-model Department {
-  id       Int       @id @default(autoincrement())
-  name     String
-  Teachers Teacher[]
+  responsibleId     Int
+  moduleResponsible Teacher      @relation(fields: [responsibleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  TimeSlot          TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Monitoring        Monitoring[]
 }
 
 model Teacher {
-  id           Int          @id @default(autoincrement())
-  lastName     String
-  firstName    String
-  phoneNumber  String
-  email        String
-  departmentId Int
-  department   Department   @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  Monitoring   Monitoring[]
-  Exam         Exam?
+  id              Int              @id @default(autoincrement())
+  lastName        String
+  firstName       String
+  phoneNumber     String
+  email           String
+  departmentId    Int
+  department      Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  monitoringLines MonitoringLine[]
+  Exam            Exam[]
 }
 
 model Monitoring {
-  id         Int       @id @default(autoincrement())
-  teachers   Teacher[]
-  examId     Int
-  exam       Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
-  location   Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  locationId Int       @unique
+  id              Int              @id @default(autoincrement())
+  exam            Exam             @relation(fields: [examId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  examId          Int
+  location        Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  locationId      Int?
+  monitoringLines MonitoringLine[]
+}
+
+model MonitoringLine {
+  id           Int        @id @default(autoincrement())
+  teacherId    Int
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  monitoringId Int
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Location {
-  id         Int         @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   name       String
   size       Int
-  Monitoring Monitoring?
+  Monitoring Monitoring[]
 }

@@ -11,6 +11,7 @@ export async function GET() {
     return new NextResponse("Could not get Departments", { status: 500 });
   }
 }
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
