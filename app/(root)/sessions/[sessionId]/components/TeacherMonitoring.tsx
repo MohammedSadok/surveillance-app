@@ -8,34 +8,70 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getMonitoring } from "@/data/session";
 import { TeacherMonitoringData, sessionDays } from "@/lib/types";
+import { Department } from "@prisma/client";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-
 interface TeacherMonitoringProps {
   sessionDays: sessionDays[];
   sessionId: string;
-  monitoring: TeacherMonitoringData[];
 }
 
 const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
   sessionDays,
   sessionId,
-  monitoring,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [department, setDepartment] = useState<number>(1);
+  const [monitoring, setMonitoring] = useState<TeacherMonitoringData[]>([]);
   const itemsPerPage = 10;
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/departments"
+        );
+        setDepartments(response.data);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des départements :",
+          error
+        );
+      }
+    };
+    fetchData();
+  }, []);
+  useEffect(() => {
+    console.log(department);
+    const fetchData = async () => {
+      const monitoring: TeacherMonitoringData[] = await getMonitoring(
+        department
+      );
+      setMonitoring(monitoring);
+    };
 
+    fetchData();
+  }, [department]);
   if (!isMounted) {
     return null;
   }
@@ -50,6 +86,19 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
   return (
     <div className="flex flex-col gap-3">
+      <Select onValueChange={(value) => setDepartment(Number(value))}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Sélectionnez le département" />
+        </SelectTrigger>
+
+        <SelectContent>
+          {departments.map((item) => (
+            <SelectItem value={item.id.toString()} key={item.id}>
+              {item.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <Table className="border rounded-lg">
         <TableHeader>
           <TableRow>
