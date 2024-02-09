@@ -4,42 +4,7 @@ import { ExamSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-// export async function GET() {
-//   const surveillance = await db.monitoring.findMany({
-//     include: {
-//       teachers: true,
-//       // examen: { include: { Creneau: true } },
-//       location: true,
-//     },
-//     where: { exam: { timeSlotId: 1 } },
-//   });
-//   const occupiedTeacherIds = surveillance.flatMap((item) =>
-//     item.teachers.map((teacher) => teacher.id)
-//   );
-
-//   const freeTeachers = await db.teacher.findMany({
-//     where: {
-//       id: {
-//         notIn: occupiedTeacherIds,
-//       },
-//     },
-//   });
-//   const occupiedLocations = await db.monitoring.findMany({
-//     where: {
-//       exam: { timeSlotId: 1 },
-//     },
-//     select: { id: true },
-//   });
-//   const occupiedLocationsIds = occupiedLocations.map((local) => local.id);
-//   const freeLocations = await db.location.findMany({
-//     where: {
-//       id: {
-//         notIn: occupiedLocationsIds,
-//       },
-//     },
-//   });
-//   return NextResponse.json({ surveillance, freeTeachers, freeLocations });
-// }
+export async function GET() {}
 
 export async function POST(req: Request) {
   try {
