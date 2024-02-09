@@ -1,3 +1,4 @@
+import { getLocationsForExam, getTeachersForExam } from "@/data/exam";
 import db from "@/lib/db";
 import { ExamSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
@@ -50,6 +51,12 @@ export async function POST(req: Request) {
       enrolledStudentsCount,
       timeSlotId,
     } = ExamSchema.parse(body);
+    const rooms = await getLocationsForExam(timeSlotId, enrolledStudentsCount);
+    const teachers = await getTeachersForExam(
+      timeSlotId,
+      rooms.length,
+      responsibleId
+    );
     const exam = await db.exam.create({
       data: {
         moduleName,
@@ -63,6 +70,17 @@ export async function POST(req: Request) {
               locationId: null,
               monitoringLines: { create: [{ teacherId: responsibleId }] },
             },
+            ...rooms.flatMap((room, index) => [
+              {
+                locationId: room.locationId,
+                monitoringLines: {
+                  create: [
+                    { teacherId: teachers[index * 2].id },
+                    { teacherId: teachers[index * 2 + 1].id },
+                  ],
+                },
+              },
+            ]),
           ],
         },
       },
