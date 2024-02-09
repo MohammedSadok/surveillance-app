@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { format } from "date-fns";
 import { SessionClient } from "./components/Client";
 
 const SessionsPage = async () => {
@@ -8,7 +7,7 @@ const SessionsPage = async () => {
   });
 
   return (
-    <div className="flex-1 space-y-4 pt-2">
+    <div className="flex-1 space-y-4 ">
       <SessionClient data={sessions} />
     </div>
   );

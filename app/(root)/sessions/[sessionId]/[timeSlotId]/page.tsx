@@ -6,7 +6,6 @@ type Props = {
 };
 
 const ExamsPage = async ({ params }: Props) => {
-  console.log("=>  ExamsPage  params:", params);
   const timeSlot = await db.timeSlot.findFirst({
     where: { id: parseInt(params.timeSlotId) },
     include: { day: true },

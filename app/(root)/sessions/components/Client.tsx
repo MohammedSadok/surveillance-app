@@ -5,9 +5,9 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { useModal } from "@/hooks/useModalStore";
+import { SessionExam } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
-import { SessionExam } from "@prisma/client";
 
 interface SessionClientProps {
   data: SessionExam[];
