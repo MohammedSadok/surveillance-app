@@ -1,6 +1,5 @@
 "use server";
 import db from "@/lib/db";
-import { Location } from "@prisma/client";
 
 export const getLocationsForExam = async (
   timeSlotId: number,
@@ -10,9 +9,13 @@ export const getLocationsForExam = async (
     where: {
       exam: { timeSlotId: timeSlotId },
     },
-    select: { id: true },
+    select: { locationId: true },
   });
-  const occupiedLocationsIds = occupiedLocations.map((local) => local.id);
+
+  const occupiedLocationsIds: number[] = occupiedLocations
+    .filter((local) => local.locationId !== null)
+    .map((local) => local.locationId as number);
+
   const freeLocations = await db.location.findMany({
     where: {
       id: {
@@ -47,8 +50,7 @@ export const getLocationsForExam = async (
 
 export const getTeachersForExam = async (
   timeSlotId: number,
-  responsibleId: number,
-  locations: Location[]
+  responsibleId: number
 ) => {
   const teachersWithMonitoring = await db.teacher.findMany({
     where: {
@@ -62,6 +64,14 @@ export const getTeachersForExam = async (
         },
       },
     },
+  });
+
+  const avgTeachers = await db.monitoringLine.groupBy({
+    by: ["teacherId"],
+    _count: {
+      id: true,
+    },
+    orderBy: { teacherId: "asc" },
   });
 
   const occupiedTeacherIds = teachersWithMonitoring.map(
