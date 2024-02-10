@@ -27,24 +27,16 @@ import { Input } from "../ui/input";
 
 const TeacherModal = () => {
   const { isOpen, onClose, type, data } = useModal();
-  const params = useParams();
+  const params = useParams<{ departmentId: string }>();
   const router = useRouter();
   const { teacher } = data;
 
   const isModalOpen =
     isOpen && (type === "createTeacher" || type === "updateTeacher");
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof TeacherSchema>>({
     resolver: zodResolver(TeacherSchema),
-    defaultValues: {
-      lastName: "",
-      firstName: "",
-      phoneNumber: "",
-      email: "",
-      departmentId: 0,
-    },
   });
-
   useEffect(() => {
     if (teacher) {
       form.setValue("firstName", teacher.firstName);
@@ -52,8 +44,11 @@ const TeacherModal = () => {
       form.setValue("departmentId", teacher.departmentId);
       form.setValue("email", teacher.email);
       form.setValue("phoneNumber", teacher.phoneNumber);
-    } else form.setValue("departmentId", parseInt(params.departmentId));
-  }, [teacher, form, params.departmentId]);
+    } else {
+      form.reset();
+    }
+    form.setValue("departmentId", parseInt(params.departmentId));
+  }, [teacher, form, params.departmentId, isOpen]);
 
   const isLoading = form.formState.isSubmitting;
 
@@ -86,6 +81,7 @@ const TeacherModal = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="px-6 space-y-4">
               <FormField
+                defaultValue=""
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
@@ -102,6 +98,7 @@ const TeacherModal = () => {
               />
               <FormField
                 control={form.control}
+                defaultValue=""
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
@@ -117,6 +114,7 @@ const TeacherModal = () => {
               />
               <FormField
                 control={form.control}
+                defaultValue=""
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -132,6 +130,7 @@ const TeacherModal = () => {
                 )}
               />
               <FormField
+                defaultValue=""
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (

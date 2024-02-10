@@ -102,15 +102,9 @@ const ExamModal = () => {
 
   const isModalOpen =
     isOpen && (type === "createExam" || type === "updateExam");
-  const form = useForm({
+
+  const form = useForm<z.infer<typeof ExamSchema>>({
     resolver: zodResolver(ExamSchema),
-    defaultValues: {
-      moduleName: "",
-      options: "",
-      enrolledStudentsCount: 0,
-      responsibleId: 0,
-      timeSlotId: parseInt(params.timeSlotId),
-    },
   });
   useEffect(() => {
     if (exam) {
@@ -118,8 +112,11 @@ const ExamModal = () => {
       form.setValue("options", exam.options);
       form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
       form.setValue("responsibleId", exam.responsibleId);
+    } else {
+      form.reset();
     }
-  }, [exam, form]);
+    form.setValue("timeSlotId", parseInt(params.timeSlotId));
+  }, [exam, form, params.timeSlotId, isOpen]);
 
   const isLoading = form.formState.isSubmitting;
 
@@ -157,6 +154,7 @@ const ExamModal = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="px-6 space-y-4">
               <FormField
+                defaultValue=""
                 control={form.control}
                 name="moduleName"
                 render={({ field }) => (
@@ -172,6 +170,7 @@ const ExamModal = () => {
                 )}
               />
               <FormField
+                defaultValue=""
                 control={form.control}
                 name="options"
                 render={({ field }) => (
@@ -189,6 +188,7 @@ const ExamModal = () => {
               <FormField
                 control={form.control}
                 name="enrolledStudentsCount"
+                defaultValue={0}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nombre d'étudiants inscrits</FormLabel>
