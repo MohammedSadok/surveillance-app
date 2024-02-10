@@ -71,7 +71,6 @@ export async function POST(req: Request) {
                 monitoringLines.push({
                   teacherId: neededTeacher[teacherIndex].id,
                 });
-                console.log(teacherIndex);
               }
 
               return {

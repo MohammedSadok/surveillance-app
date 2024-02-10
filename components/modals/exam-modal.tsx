@@ -37,6 +37,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Department, Teacher } from "@prisma/client";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -289,7 +290,13 @@ const ExamModal = () => {
             </div>
 
             <DialogFooter className="px-6 py-4 bg-gray-100">
-              <Button disabled={isLoading}>Créer</Button>
+              <Button disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Créer"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
