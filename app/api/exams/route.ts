@@ -4,7 +4,10 @@ import { ExamSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function GET() {}
+export async function GET() {
+  const rooms = await getLocationsForExam(1, 181);
+  return NextResponse.json(rooms);
+}
 
 export async function POST(req: Request) {
   try {
@@ -16,12 +19,36 @@ export async function POST(req: Request) {
       enrolledStudentsCount,
       timeSlotId,
     } = ExamSchema.parse(body);
-    const rooms = await getLocationsForExam(timeSlotId, enrolledStudentsCount);
+
+    const { examRooms, remainingStudent } = await getLocationsForExam(
+      timeSlotId,
+      enrolledStudentsCount
+    );
     const teachers = await getTeachersForExam(
       timeSlotId,
-      rooms.length,
-      responsibleId
+      responsibleId,
+      examRooms
     );
+
+    if (remainingStudent > 0) {
+      return NextResponse.json({
+        error: "nombre de locaux insuffisant pour passer l'examen",
+      });
+    }
+
+    let neededTeacherNumber = 0;
+    examRooms.forEach((location) => {
+      neededTeacherNumber += location.type === "AMPHITHEATER" ? 3 : 2;
+    });
+
+    if (neededTeacherNumber >= teachers.length) {
+      return NextResponse.json({
+        error: "nombre des enseignant insuffisant pour passer l'examen",
+      });
+    }
+
+    const neededTeacher = teachers.slice(0, neededTeacherNumber);
+    let teacherIndex = 0;
     const exam = await db.exam.create({
       data: {
         moduleName,
@@ -35,17 +62,25 @@ export async function POST(req: Request) {
               locationId: null,
               monitoringLines: { create: [{ teacherId: responsibleId }] },
             },
-            ...rooms.flatMap((room, index) => [
-              {
-                locationId: room.locationId,
+
+            ...examRooms.flatMap((room, index) => {
+              const numTeachers = room.type === "AMPHITHEATER" ? 3 : 2;
+              const monitoringLines = [];
+
+              for (let i = 0; i < numTeachers; i++, teacherIndex++) {
+                monitoringLines.push({
+                  teacherId: neededTeacher[teacherIndex].id,
+                });
+                console.log(teacherIndex);
+              }
+
+              return {
+                locationId: room.id,
                 monitoringLines: {
-                  create: [
-                    { teacherId: teachers[index * 2].id },
-                    { teacherId: teachers[index * 2 + 1].id },
-                  ],
+                  create: monitoringLines,
                 },
-              },
-            ]),
+              };
+            }),
           ],
         },
       },

@@ -1,5 +1,6 @@
 "use server";
 import db from "@/lib/db";
+import { Location } from "@prisma/client";
 
 export const getLocationsForExam = async (
   timeSlotId: number,
@@ -21,25 +22,33 @@ export const getLocationsForExam = async (
     orderBy: { size: "desc" },
   });
   const examRooms = [];
-  let remainingStudents = enrolledStudentsCount;
-  for (const location of freeLocations) {
-    if (remainingStudents <= 0) {
-      break;
+  for (let i = 0; i < freeLocations.length; i++) {
+    const currentLocation = freeLocations[i];
+    const nextLocation = freeLocations[i + 1];
+
+    if (enrolledStudentsCount >= currentLocation.size) {
+      examRooms.push({
+        ...currentLocation,
+        studentsCount: currentLocation.size,
+      });
+      enrolledStudentsCount -= currentLocation.size;
+    } else if (nextLocation && enrolledStudentsCount <= nextLocation.size)
+      continue;
+    else if (enrolledStudentsCount) {
+      examRooms.push({
+        ...currentLocation,
+        studentsCount: enrolledStudentsCount,
+      });
+      enrolledStudentsCount = 0;
     }
-    const studentsToFit = Math.min(remainingStudents, location.size);
-    examRooms.push({
-      locationId: location.id,
-      studentsCount: studentsToFit,
-    });
-    remainingStudents -= studentsToFit;
   }
-  return examRooms;
+  return { examRooms, remainingStudent: enrolledStudentsCount };
 };
 
 export const getTeachersForExam = async (
   timeSlotId: number,
-  roomsNumber: number,
-  responsibleId: number
+  responsibleId: number,
+  locations: Location[]
 ) => {
   const teachersWithMonitoring = await db.teacher.findMany({
     where: {
@@ -54,9 +63,11 @@ export const getTeachersForExam = async (
       },
     },
   });
+
   const occupiedTeacherIds = teachersWithMonitoring.map(
     (teacher) => teacher.id
   );
+
   occupiedTeacherIds.push(responsibleId);
   const freeTeachers = await db.teacher.findMany({
     where: {
@@ -65,5 +76,6 @@ export const getTeachersForExam = async (
       },
     },
   });
-  return freeTeachers.slice(0, roomsNumber * 2);
+
+  return freeTeachers;
 };

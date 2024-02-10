@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   Pagination,
   PaginationContent,
@@ -25,7 +26,9 @@ import { getMonitoring } from "@/data/session";
 import { TeacherMonitoringData, sessionDays } from "@/lib/types";
 import { Department } from "@prisma/client";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { FileDown } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 interface TeacherMonitoringProps {
   sessionDays: sessionDays[];
   sessionId: string;
@@ -35,16 +38,16 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
   sessionDays,
   sessionId,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [department, setDepartment] = useState<number>(1);
+  const [department, setDepartment] = useState<number>(0);
   const [monitoring, setMonitoring] = useState<TeacherMonitoringData[]>([]);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,19 +65,16 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
     fetchData();
   }, []);
   useEffect(() => {
-    console.log(department);
     const fetchData = async () => {
       const monitoring: TeacherMonitoringData[] = await getMonitoring(
-        department
+        department,
+        parseInt(sessionId)
       );
       setMonitoring(monitoring);
     };
 
     fetchData();
-  }, [department]);
-  if (!isMounted) {
-    return null;
-  }
+  }, [department, sessionId]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -86,20 +86,24 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <Select onValueChange={(value) => setDepartment(Number(value))}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Sélectionnez le département" />
-        </SelectTrigger>
-
-        <SelectContent>
-          {departments.map((item) => (
-            <SelectItem value={item.id.toString()} key={item.id}>
-              {item.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Table className="border rounded-lg">
+      <div className="flex justify-between items-center">
+        <Select onValueChange={(value) => setDepartment(Number(value))}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sélectionnez le département" />
+          </SelectTrigger>
+          <SelectContent>
+            {departments.map((item) => (
+              <SelectItem value={item.id.toString()} key={item.id}>
+                {item.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button onClick={handlePrint} variant="ghost">
+          <FileDown />
+        </Button>
+      </div>
+      <Table className="border rounded-lg" ref={componentRef}>
         <TableHeader>
           <TableRow>
             <TableCell className="border text-center" rowSpan={2}>

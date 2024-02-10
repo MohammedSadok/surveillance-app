@@ -40,11 +40,11 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import * as z from "zod";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-
 const ExamModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const { exam } = data;
@@ -126,8 +126,12 @@ const ExamModal = () => {
   const onSubmit = async (values: z.infer<typeof ExamSchema>) => {
     const newValues = { ...values, timeSlotId: parseInt(params.timeSlotId) };
     try {
-      if (type === "createExam") await axios.post("/api/exams", newValues);
-      else axios.patch(`/api/exams/${exam?.id}`, newValues);
+      if (type === "createExam") {
+        const response = await axios.post("/api/exams", newValues);
+        if (response.data.error) {
+          toast.error(response.data.error);
+        }
+      } else axios.patch(`/api/exams/${exam?.id}`, newValues);
       form.reset();
       setSelectedTeacher(null);
       router.refresh();

@@ -15,7 +15,6 @@ export async function DELETE(
         id: parseInt(params.examId),
       },
     });
-    // await db.monitoring.delete({ where: { examId: parseInt(params.examId) } });
 
     return NextResponse.json(exam);
   } catch (error) {

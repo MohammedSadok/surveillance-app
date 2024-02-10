@@ -37,11 +37,14 @@ export const TeacherSchema = z.object({
 });
 
 export const LocationSchema = z.object({
-  name: z.string().min(3, {
-    message: "Le nom doit contenir au moins 3 caractères.",
+  name: z.string().min(1, {
+    message: "Le nom doit contenir au moins 1 caractère.",
   }),
   size: z.number().int().min(1, {
     message: "La taille doit être un nombre entier positif.",
+  }),
+  type: z.enum(["CLASSROOM", "AMPHITHEATER"], {
+    required_error: "Vous devez selectionner le type.",
   }),
 });
 

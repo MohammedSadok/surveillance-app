@@ -12,6 +12,12 @@ export const columns: ColumnDef<Location>[] = [
     header: "Taille",
   },
   {
+    accessorKey: "type",
+    header: "Type",
+    cell: ({ row }) =>
+      row.original.type == "AMPHITHEATER" ? "amphi" : "salle",
+  },
+  {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,
   },

@@ -124,9 +124,15 @@ model MonitoringLine {
   monitoring   Monitoring @relation(fields: [monitoringId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+enum RoomType {
+  CLASSROOM
+  AMPHITHEATER
+}
+
 model Location {
   id         Int          @id @default(autoincrement())
   name       String
   size       Int
+  type       RoomType
   Monitoring Monitoring[]
 }

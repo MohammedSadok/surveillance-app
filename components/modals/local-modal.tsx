@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "../ui/input";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 const LocalModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -32,18 +34,17 @@ const LocalModal = () => {
   const isModalOpen =
     isOpen && (type === "createBuilding" || type === "updateBuilding");
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof LocationSchema>>({
     resolver: zodResolver(LocationSchema),
-    defaultValues: {
-      name: "",
-      size: 0,
-    },
   });
 
   useEffect(() => {
     if (building) {
       form.setValue("name", building.name);
       form.setValue("size", building.size);
+      form.setValue("type", building.type);
+    } else {
+      form.reset();
     }
   }, [building, form]);
 
@@ -78,6 +79,7 @@ const LocalModal = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="px-6 space-y-4">
               <FormField
+                defaultValue=""
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -95,6 +97,7 @@ const LocalModal = () => {
               <FormField
                 control={form.control}
                 name="size"
+                defaultValue={0}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Taille</FormLabel>
@@ -106,6 +109,36 @@ const LocalModal = () => {
                       }
                       value={field.value}
                     />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex  space-x-1"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="CLASSROOM" />
+                          </FormControl>
+                          <FormLabel className="font-normal">salle</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="AMPHITHEATER" />
+                          </FormControl>
+                          <FormLabel className="font-normal">amphi</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

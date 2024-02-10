@@ -31,7 +31,7 @@ export async function PATCH(
       return new NextResponse("Local id is required", { status: 400 });
     }
     const body = await req.json();
-    const { name, size } = LocationSchema.parse(body);
+    const { name, size, type } = LocationSchema.parse(body);
     const exam = await db.location.update({
       where: {
         id: parseInt(params.locationId),
@@ -39,6 +39,7 @@ export async function PATCH(
       data: {
         name,
         size,
+        type,
       },
     });
     return NextResponse.json(exam);
