@@ -6,6 +6,11 @@ export const columns: ColumnDef<Location>[] = [
   {
     accessorKey: "name",
     header: "Nom",
+
+    cell: ({ row }) =>
+      row.original.type == "AMPHITHEATER"
+        ? row.original.name
+        : "Salle " + row.original.name,
   },
   {
     accessorKey: "size",

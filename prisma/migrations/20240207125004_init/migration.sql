@@ -65,8 +65,8 @@ CREATE TABLE `Day` (
 -- CreateTable
 CREATE TABLE `TimeSlot` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `startTime` VARCHAR(191) NOT NULL,
-    `endTime` VARCHAR(191) NOT NULL,
+    `period` VARCHAR(191) NOT NULL,
+    `timePeriod` ENUM('MORNING', 'AFTERNOON') NOT NULL,
     `dayId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)

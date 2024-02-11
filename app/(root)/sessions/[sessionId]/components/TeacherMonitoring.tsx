@@ -124,9 +124,9 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
               item.timeSlot.map((timeSlotItem) => (
                 <TableCell
                   key={timeSlotItem.id}
-                  className="border text-center text-s"
+                  className="border text-center text-xs"
                 >
-                  {timeSlotItem.startTime + " " + timeSlotItem.endTime}
+                  {timeSlotItem.period}
                 </TableCell>
               ))
             )}

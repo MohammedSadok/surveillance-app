@@ -1,6 +1,6 @@
-import { days } from "@/constants";
 import db from "@/lib/db";
 import { SessionSchema } from "@/lib/validator";
+import { TimePeriod } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 export async function GET() {
@@ -47,15 +47,28 @@ export async function POST(req: Request) {
     });
     for (const day of createdSession.day) {
       await db.timeSlot.createMany({
-        data: days.flatMap((scheduleItem) =>
-          Object.entries(scheduleItem).flatMap(([time, slots]) =>
-            slots.map((slot) => ({
-              startTime: slot.split(" - ")[0],
-              endTime: slot.split(" - ")[1],
-              dayId: day.id,
-            }))
-          )
-        ),
+        data: [
+          {
+            timePeriod: TimePeriod.MORNING,
+            period: "8:00 - 10:00",
+            dayId: day.id,
+          },
+          {
+            timePeriod: TimePeriod.MORNING,
+            period: "10:00 - 12:00",
+            dayId: day.id,
+          },
+          {
+            timePeriod: TimePeriod.AFTERNOON,
+            period: "2:00 - 4:00",
+            dayId: day.id,
+          },
+          {
+            timePeriod: TimePeriod.AFTERNOON,
+            period: "4:00 - 6:00",
+            dayId: day.id,
+          },
+        ],
       });
     }
 

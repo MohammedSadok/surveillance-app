@@ -67,13 +67,18 @@ model Day {
   timeSlot      TimeSlot[]
 }
 
+enum TimePeriod {
+  MORNING
+  AFTERNOON
+}
+
 model TimeSlot {
-  id        Int    @id @default(autoincrement())
-  startTime String
-  endTime   String
-  dayId     Int
-  day       Day    @relation(fields: [dayId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Exam      Exam[]
+  id         Int        @id @default(autoincrement())
+  timePeriod TimePeriod
+  period     String
+  dayId      Int
+  day        Day        @relation(fields: [dayId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Exam       Exam[]
 }
 
 model Department {

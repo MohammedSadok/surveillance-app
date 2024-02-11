@@ -5,8 +5,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function GET() {
-  const rooms = await getLocationsForExam(1, 181);
-  return NextResponse.json(rooms);
+  try {
+    const exams = await db.exam.findMany();
+    return NextResponse.json(exams);
+  } catch {
+    return new NextResponse("Could not get exams", { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
@@ -24,11 +28,7 @@ export async function POST(req: Request) {
       timeSlotId,
       enrolledStudentsCount
     );
-    const teachers = await getTeachersForExam(
-      timeSlotId,
-      responsibleId,
-      examRooms
-    );
+    const teachers = await getTeachersForExam(timeSlotId, responsibleId);
 
     if (remainingStudent > 0) {
       return NextResponse.json({
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
               for (let i = 0; i < numTeachers; i++, teacherIndex++) {
                 monitoringLines.push({
-                  teacherId: neededTeacher[teacherIndex].id,
+                  teacherId: neededTeacher[teacherIndex],
                 });
               }
 

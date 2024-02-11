@@ -52,40 +52,108 @@ export const getTeachersForExam = async (
   timeSlotId: number,
   responsibleId: number
 ) => {
-  const teachersWithMonitoring = await db.teacher.findMany({
-    where: {
-      monitoringLines: {
-        some: {
-          monitoring: {
-            exam: {
-              timeSlotId: timeSlotId,
-            },
-          },
-        },
-      },
-    },
-  });
-
   const avgTeachers = await db.monitoringLine.groupBy({
     by: ["teacherId"],
     _count: {
       id: true,
     },
-    orderBy: { teacherId: "asc" },
-  });
-
-  const occupiedTeacherIds = teachersWithMonitoring.map(
-    (teacher) => teacher.id
-  );
-
-  occupiedTeacherIds.push(responsibleId);
-  const freeTeachers = await db.teacher.findMany({
+    orderBy: { _count: { id: "asc" } },
     where: {
-      id: {
-        notIn: occupiedTeacherIds,
-      },
+      AND: [
+        {
+          teacher: {
+            monitoringLines: {
+              none: {
+                monitoring: {
+                  exam: {
+                    timeSlotId: timeSlotId,
+                  },
+                },
+              },
+            },
+          },
+        },
+        { NOT: { teacherId: responsibleId } },
+      ],
     },
   });
 
-  return freeTeachers;
+  const avgTeachersIds: number[] = avgTeachers.map(
+    ({ teacherId }) => teacherId
+  );
+
+  const freeTeachers = await db.teacher.findMany({
+    select: { id: true },
+    where: {
+      AND: [
+        {
+          id: {
+            notIn: [...avgTeachersIds, responsibleId],
+          },
+        },
+        {
+          monitoringLines: {
+            none: {
+              monitoring: {
+                exam: {
+                  timeSlotId: timeSlotId,
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  // to get teacher dose not have any monitoring
+  const freeTeacherIds = freeTeachers.map(({ id }) => id);
+
+  freeTeacherIds.push(...avgTeachersIds);
+
+  const day = await db.timeSlot.findUnique({
+    where: { id: timeSlotId },
+  });
+
+  const teachersInSamePeriod = await db.teacher.findMany({
+    select: { id: true },
+    where: {
+      AND: [
+        {
+          id: {
+            in: [...avgTeachersIds, responsibleId],
+          },
+        },
+        {
+          monitoringLines: {
+            some: {
+              monitoring: {
+                exam: {
+                  TimeSlot: { dayId: day?.dayId, timePeriod: day?.timePeriod },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+  const teachersInSamePeriodIds: number[] = teachersInSamePeriod.map(
+    ({ id }) => id
+  );
+  freeTeacherIds.sort((a, b) => {
+    const indexA = teachersInSamePeriodIds.indexOf(a);
+    const indexB = teachersInSamePeriodIds.indexOf(b);
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    if (indexA !== -1) {
+      return -1;
+    }
+    if (indexB !== -1) {
+      return 1;
+    }
+    return 0;
+  });
+  return freeTeacherIds;
 };
