@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import db from "@/lib/db";
 import { ExamType } from "@/lib/types";
 import { format } from "date-fns";
+import { BookCheck, Users } from "lucide-react";
 import { Metadata } from "next";
 import { Overview } from "./components/overview";
 import { RecentExams } from "./components/recent-sales";
@@ -70,53 +71,25 @@ const DashboardPage = async () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Nombre total d'examens
-              </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
+              <CardTitle className="text-sm font-medium">Exams</CardTitle>
+              <BookCheck className="text-gray-600 w-5" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{numberOfExams}</div>
               <p className="text-xs text-muted-foreground">
-                +20.1% par rapport au mois dernier
+                Nombre total d'exams du dernier session
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Nombre total d'enseignants
-              </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
+              <CardTitle className="text-sm font-medium">Enseignants</CardTitle>
+              <Users className="text-gray-600 w-5" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{numberOfTeachers}</div>
               <p className="text-xs text-muted-foreground">
-                +180.1% par rapport au mois dernier
+                Nombre total d'enseignants dans la faculte
               </p>
             </CardContent>
           </Card>
@@ -166,10 +139,12 @@ const DashboardPage = async () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {(totalMonitoring._count.id / numberOfTeachers).toFixed(2)}
+                {((totalMonitoring._count.id / numberOfTeachers) * 2).toFixed(
+                  2
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
-                +201 depuis la dernière heure
+                Moyenne de surveillance par enseignant dans la dernière session
               </p>
             </CardContent>
           </Card>
@@ -185,10 +160,8 @@ const DashboardPage = async () => {
           </Card>
           <Card className="col-span-3">
             <CardHeader>
-              <CardTitle>Ventes récentes</CardTitle>
-              <CardDescription>
-                Vous avez effectué 265 ventes ce mois-ci.
-              </CardDescription>
+              <CardTitle>Exams récentes</CardTitle>
+              <CardDescription>Les cinq dernier exams</CardDescription>
             </CardHeader>
             <CardContent>
               <RecentExams lastExams={lastExams} />
