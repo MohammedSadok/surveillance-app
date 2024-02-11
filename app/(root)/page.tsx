@@ -1,6 +1,4 @@
 import { auth } from "@/auth";
-import { Metadata } from "next";
-
 import {
   Card,
   CardContent,
@@ -10,22 +8,62 @@ import {
 } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+import db from "@/lib/db";
+import { ExamType } from "@/lib/types";
+import { format } from "date-fns";
+import { Metadata } from "next";
 import { Overview } from "./components/overview";
-import { RecentSales } from "./components/recent-sales";
+import { RecentExams } from "./components/recent-sales";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Example dashboard app built using the components.",
+  title: "Tableau de bord",
+  description:
+    "Application de tableau de bord d'exemple utilisant les composants.",
 };
+
 const DashboardPage = async () => {
   const session = await auth();
+  const lastSession = await db.sessionExam.findFirst({
+    orderBy: { id: "desc" },
+  });
+  const sessionDays = await db.day.findMany({
+    where: {
+      sessionExamId: lastSession?.id,
+    },
+    include: {
+      timeSlot: { include: { Exam: true } },
+    },
+  });
+  const examsPerDay = sessionDays.map((day) => ({
+    day: format(day.date, "LLL dd, y"),
+    total: day.timeSlot.reduce(
+      (acc, timeSlot) => acc + timeSlot.Exam.length,
+      0
+    ),
+  }));
+  const totalMonitoring = await db.monitoringLine.aggregate({
+    _count: {
+      id: true,
+    },
+    where: {
+      monitoring: {
+        exam: { TimeSlot: { day: { sessionExamId: lastSession?.id } } },
+      },
+    },
+  });
+  const numberOfExams = await db.exam.count();
+  const lastExams: ExamType[] = await db.exam.findMany({
+    take: 5,
+    include: { moduleResponsible: true },
+    orderBy: { id: "desc" },
+  });
+  const numberOfTeachers = await db.teacher.count();
+  const numberOfDepartments = await db.department.count();
+
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading
-          title={`Sessions les sessions`}
-          description="Gérer les sessions"
-        />
+        <Heading title={`Sessions`} description="Gérer les sessions" />
       </div>
       <Separator className="my-4" />
       <div className="space-y-4">
@@ -33,7 +71,7 @@ const DashboardPage = async () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Revenue
+                Nombre total d'examens
               </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -49,16 +87,16 @@ const DashboardPage = async () => {
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
+              <div className="text-2xl font-bold">{numberOfExams}</div>
               <p className="text-xs text-muted-foreground">
-                +20.1% from last month
+                +20.1% par rapport au mois dernier
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Subscriptions
+                Nombre total d'enseignants
               </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -76,15 +114,17 @@ const DashboardPage = async () => {
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
+              <div className="text-2xl font-bold">{numberOfTeachers}</div>
               <p className="text-xs text-muted-foreground">
-                +180.1% from last month
+                +180.1% par rapport au mois dernier
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sales</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Nombre total de départements
+              </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -100,15 +140,17 @@ const DashboardPage = async () => {
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+12,234</div>
+              <div className="text-2xl font-bold">{numberOfDepartments}</div>
               <p className="text-xs text-muted-foreground">
-                +19% from last month
+                +19% par rapport au mois dernier
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Surveillance actuelle
+              </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -123,9 +165,11 @@ const DashboardPage = async () => {
               </svg>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+573</div>
+              <div className="text-2xl font-bold">
+                {(totalMonitoring._count.id / numberOfTeachers).toFixed(2)}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +201 since last hour
+                +201 depuis la dernière heure
               </p>
             </CardContent>
           </Card>
@@ -133,19 +177,21 @@ const DashboardPage = async () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>
-              <CardTitle>Overview</CardTitle>
+              <CardTitle>Aperçu</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <Overview />
+              <Overview data={examsPerDay} />
             </CardContent>
           </Card>
           <Card className="col-span-3">
             <CardHeader>
-              <CardTitle>Recent Sales</CardTitle>
-              <CardDescription>You made 265 sales this month.</CardDescription>
+              <CardTitle>Ventes récentes</CardTitle>
+              <CardDescription>
+                Vous avez effectué 265 ventes ce mois-ci.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <RecentSales />
+              <RecentExams lastExams={lastExams} />
             </CardContent>
           </Card>
         </div>
