@@ -25,9 +25,7 @@ export const RecentExams = ({ lastExams }: ResentExamsProps) => {
             </p>
           </div>
           <div className="ml-auto font-medium flex flex-col">
-            <p className="ml-auto">
-              le module: {exam.moduleName.toUpperCase()}
-            </p>
+            <p className="ml-auto">{exam.moduleName.toUpperCase()}</p>
             <p className="ml-auto text-sm text-muted-foreground">
               {exam.options + " : " + exam.enrolledStudentsCount + " etudiants"}
             </p>

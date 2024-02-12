@@ -3,8 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import db from "@/lib/db";
 import { sessionDays } from "@/lib/types";
 import { format } from "date-fns";
-import Schedule from "./components/Schedule";
-import TeacherMonitoring from "./components/TeacherMonitoring";
+import Schedule from "../../../../components/Schedule";
+import TeacherMonitoring from "../../../../components/TeacherMonitoring";
 
 interface ExamsPageProps {
   params: { sessionId: string };
@@ -23,6 +23,13 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
       timeSlot: true,
     },
   });
+  const monitoringDays = days.map(async (day) => {
+    return await db.monitoring.findMany({
+      where: { exam: { TimeSlot: { dayId: day.id } } },
+      include: { exam: true, location: true, monitoringLines: true },
+    });
+  });
+
   const formattedDays: sessionDays[] = days.map((item) => ({
     ...item,
     date: format(item.date, "dd/MM/yyyy"),

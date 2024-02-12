@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useModal } from "@/hooks/useModalStore";
+import { UploadButton } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import { ExamSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -113,6 +114,7 @@ const ExamModal = () => {
       form.setValue("options", exam.options);
       form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
       form.setValue("responsibleId", exam.responsibleId);
+      form.setValue("urlFile", exam.urlFile);
     } else {
       form.reset();
     }
@@ -205,6 +207,7 @@ const ExamModal = () => {
                   </FormItem>
                 )}
               />
+
               <div className="space-y-2">
                 <FormLabel>Responsable du module</FormLabel>
                 <div className="grid gap-2 grid-cols-10">
@@ -287,6 +290,29 @@ const ExamModal = () => {
                   />
                 </div>
               </div>
+              <FormField
+                control={form.control}
+                name="urlFile"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start space-y-2 min-w-max">
+                    <FormLabel>Uploader un ficher excel</FormLabel>
+                    <UploadButton
+                      endpoint="fileUploader"
+                      onClientUploadComplete={(res) => {
+                        form.setValue("urlFile", res[0].url);
+                      }}
+                      onUploadError={(error: Error) => {
+                        alert(`ERROR! ${error.message}`);
+                      }}
+                      appearance={{
+                        allowedContent: "hidden",
+                        button: "bg-gray-800 text-sm h-7 w-28",
+                      }}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <DialogFooter className="px-6 py-4 bg-gray-100">

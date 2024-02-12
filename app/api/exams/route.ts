@@ -4,14 +4,52 @@ import { ExamSchema } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function GET() {
-  try {
-    const exams = await db.exam.findMany();
-    return NextResponse.json(exams);
-  } catch {
-    return new NextResponse("Could not get exams", { status: 500 });
-  }
-}
+// export async function GET() {
+//   try {
+//     // const exams = await db.exam.findMany();
+//     const days = await db.day.findMany({
+//       where: {
+//         sessionExamId: 1,
+//       },
+//       orderBy: {
+//         date: "asc",
+//       },
+//       include: {
+//         timeSlot: true,
+//       },
+//     });
+//     const monitoringDaysPromises = days.map(async (day) => {
+//       return await db.monitoring.findMany({
+//         where: { exam: { TimeSlot: { dayId: day.id } } },
+//         include: {
+//           exam: { include: { moduleResponsible: true } },
+//           location: true,
+//           monitoringLines: { include: { teacher: true } },
+//         },
+//       });
+//     });
+
+//     // Wait for all promises to resolve
+//     const monitoringDays = await Promise.all(monitoringDaysPromises);
+//     const formatted = monitoringDays.map((day) =>
+//       day.map((line) => {
+//         return {
+//           line.location ?
+//           module: line.exam.moduleName,
+//           responsible: line.exam.moduleResponsible.lastName,
+//           monitoring: {
+//             location: line.location?.name,
+//             monitoringLines: line.monitoringLines,
+//           },
+//         };
+//       })
+//     );
+
+//     return NextResponse.json(formatted);
+//   } catch {
+//     return new NextResponse("Could not get exams", { status: 500 });
+//   }
+// }
 
 export async function POST(req: Request) {
   try {
@@ -22,6 +60,7 @@ export async function POST(req: Request) {
       responsibleId,
       enrolledStudentsCount,
       timeSlotId,
+      urlFile,
     } = ExamSchema.parse(body);
 
     const { examRooms, remainingStudent } = await getLocationsForExam(
@@ -56,6 +95,7 @@ export async function POST(req: Request) {
         enrolledStudentsCount,
         timeSlotId,
         responsibleId,
+        urlFile,
         Monitoring: {
           create: [
             {

@@ -24,8 +24,8 @@ export const ExamClient: React.FC<ExamClientProps> = ({ data, timeSlot }) => {
           <Heading
             title={`Examens (${data.length})`}
             description={`le ${format(timeSlot.day.date, "EEEE d-MM-y")} de ${
-              timeSlot?.startTime
-            } à ${timeSlot?.endTime}`}
+              timeSlot?.period
+            } `}
           />
         )}
         <Button onClick={() => onOpen("createExam")}>

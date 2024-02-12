@@ -64,6 +64,9 @@ export const ExamSchema = z.object({
   timeSlotId: z.number().int().min(1, {
     message: "L'identifiant de l'intervalle de temps est requis.",
   }),
+  urlFile: z.string().min(1, {
+    message: "Le fichier Excel est requis",
+  }),
 });
 
 export const LoginSchema = z.object({

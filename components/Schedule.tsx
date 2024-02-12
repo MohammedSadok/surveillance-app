@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { days } from "@/constants";
 import { sessionDays } from "@/lib/types";
-import { PlusCircle } from "lucide-react";
+import { FileDown, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -48,7 +48,10 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 relative">
+      <Button variant="ghost" className="absolute right-0 -top-12">
+        <FileDown />
+      </Button>
       <Table className="border rounded-lg">
         <TableHeader>
           <TableRow>

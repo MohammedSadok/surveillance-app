@@ -88,16 +88,16 @@ model Department {
 }
 
 model Exam {
-  id                    Int    @id @default(autoincrement())
+  id                    Int          @id @default(autoincrement())
   moduleName            String
   options               String
   enrolledStudentsCount Int
-
-  timeSlotId        Int
-  responsibleId     Int
-  moduleResponsible Teacher      @relation(fields: [responsibleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  TimeSlot          TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  Monitoring        Monitoring[]
+  timeSlotId            Int
+  responsibleId         Int
+  urlFile               String
+  moduleResponsible     Teacher      @relation(fields: [responsibleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  TimeSlot              TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Monitoring            Monitoring[]
 }
 
 model Teacher {
