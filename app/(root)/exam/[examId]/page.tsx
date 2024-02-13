@@ -10,7 +10,11 @@ const ExamPage = async ({ params }: ExamPageProps) => {
   const id = parseInt(params.examId);
   const exam: ExamStudentType = await db.exam.findFirst({
     where: { id: id },
-    include: { moduleResponsible: true, TimeSlot: true, Monitoring: true },
+    include: {
+      moduleResponsible: true,
+      TimeSlot: true,
+      Monitoring: { include: { location: true } },
+    },
   });
   return <StudentsList exam={exam} />;
 };

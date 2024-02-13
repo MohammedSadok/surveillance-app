@@ -9,15 +9,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -36,33 +30,42 @@ type Student = {
   lastName: string;
 };
 const StudentsList = ({ exam }: StudentsListProps) => {
-  const componentRef = useRef<any>();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
   const [data, setData] = useState<Student[]>([]);
-  const [location, setLocation] = useState<number>();
+  const componentRef = useRef<any>();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 25;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  let studentsNumber = data.length;
+  let start = 0;
+  const studentsPerLocation = exam?.Monitoring.map((item) => {
+    if (item.location && item.location.size > 0) {
+      const students =
+        studentsNumber > item.location.size
+          ? item.location.size
+          : studentsNumber;
+      studentsNumber -= students;
+      const locationStudents = data.slice(start, start + students);
+      start += students;
 
-  // Function to split data into chunks
-  const chunkArray = (arr: Student[], chunkSize: number) => {
-    const chunks = [];
-    for (let i = 0; i < arr.length; i += chunkSize) {
-      chunks.push(arr.slice(i, i + chunkSize));
+      // Splitting locationStudents into arrays of maximum 30 lines each
+      const dividedStudents = [];
+      for (let i = 0; i < locationStudents.length; i += 30) {
+        dividedStudents.push(locationStudents.slice(i, i + 30));
+      }
+
+      return {
+        location: item.location.name,
+        students: dividedStudents,
+      };
     }
-    return chunks;
-  };
+  }).filter(Boolean);
 
-  // Split data into chunks of 30
-  const chunkedData = chunkArray(data, 30);
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
   useEffect(() => {
     (async () => {
       const f = await fetch(`${exam?.urlFile}`);
@@ -70,29 +73,23 @@ const StudentsList = ({ exam }: StudentsListProps) => {
       const wb = read(ab);
       const ws = wb.Sheets[wb.SheetNames[0]];
       const newData: Student[] = utils.sheet_to_json(ws);
-      console.log("=>  newData:", newData);
       setData(newData);
     })();
   }, [exam?.urlFile]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return data.length ? (
-    <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <Select onValueChange={(value) => setLocation(Number(value))}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sélectionnez le département" />
-          </SelectTrigger>
-          <SelectContent>
-            {exam?.Monitoring.map((item) => (
-              <SelectItem value={item.id.toString()} key={item.id}>
-                {item.locationId}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button onClick={handlePrint} variant="ghost">
-          <FileDown />
-        </Button>
-      </div>
+    <div className="flex flex-col gap-3 relative">
+      <Button
+        onClick={handlePrint}
+        variant="ghost"
+        className="absolute right-0 z-10"
+      >
+        <FileDown />
+      </Button>
+
       <Table className="border rounded-lg">
         <TableHeader>
           <TableRow className="border text-center">
@@ -153,34 +150,46 @@ const StudentsList = ({ exam }: StudentsListProps) => {
       </Pagination>
       <div className="hidden">
         <div ref={componentRef}>
-          {chunkedData.map((chunk, index) => (
-            <Table className="border rounded-lg page-break" key={index}>
-              <TableHeader>
-                <TableRow className="border text-center">
-                  {Object.keys(chunk[0]).map((key) => (
-                    <TableHead key={key} className="border text-center">
-                      {key}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {chunk.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell className="border text-center p-1">
-                      {student.id}
-                    </TableCell>
-                    <TableCell className="border text-center p-1">
-                      {student.firstName}
-                    </TableCell>
-                    <TableCell className="border text-center p-1">
-                      {student.lastName}
-                    </TableCell>
-                  </TableRow>
+          {studentsPerLocation?.map((location, locationIndex) => {
+            return (
+              <div key={location?.location}>
+                {location?.students.map((chunk, index) => (
+                  <Table className="border rounded-lg h-full" key={index}>
+                    <TableCaption className="caption-top text-2xl mb-2 uppercase text-bla">
+                      {location?.location.toUpperCase()}
+                    </TableCaption>
+                    <TableHeader>
+                      <TableRow className="border text-center">
+                        {Object.keys(chunk[0]).map((key) => (
+                          <TableHead key={key} className="border text-center">
+                            {key}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {chunk.map((student) => (
+                        <TableRow key={student.id}>
+                          <TableCell className="border text-center p-1">
+                            {student.id}
+                          </TableCell>
+                          <TableCell className="border text-center p-1">
+                            {student.firstName}
+                          </TableCell>
+                          <TableCell className="border text-center p-1">
+                            {student.lastName}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 ))}
-              </TableBody>
-            </Table>
-          ))}
+                {locationIndex !== studentsPerLocation.length - 1 && (
+                  <div className="pagebreak"></div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -14,7 +14,6 @@ export const columns: ColumnDef<ExamType>[] = [
       </Link>
     ),
   },
-
   {
     accessorKey: "options",
     header: "Filière",

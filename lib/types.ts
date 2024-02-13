@@ -31,6 +31,6 @@ export type ExamStudentType =
   | (Exam & {
       moduleResponsible: Teacher;
       TimeSlot: TimeSlot;
-      Monitoring: Monitoring[];
+      Monitoring: (Monitoring & { location: Location | null })[];
     })
   | null;
