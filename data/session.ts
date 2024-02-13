@@ -11,24 +11,44 @@ export const getMonitoring = async (
         include: { monitoring: { include: { exam: true, location: true } } },
       },
     },
-    where: {
-      departmentId: departmentId,
-      monitoringLines: {
-        some: {
-          monitoring: {
-            exam: {
-              TimeSlot: {
-                day: {
-                  sessionExam: {
-                    id: sessionId,
+    where:
+      departmentId === 0
+        ? {
+            monitoringLines: {
+              some: {
+                monitoring: {
+                  exam: {
+                    TimeSlot: {
+                      day: {
+                        sessionExam: {
+                          id: sessionId,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          }
+        : {
+            departmentId: departmentId,
+            monitoringLines: {
+              some: {
+                monitoring: {
+                  exam: {
+                    TimeSlot: {
+                      day: {
+                        sessionExam: {
+                          id: sessionId,
+                        },
+                      },
+                    },
                   },
                 },
               },
             },
           },
-        },
-      },
-    },
   });
+
   return teacherMonitoring;
 };

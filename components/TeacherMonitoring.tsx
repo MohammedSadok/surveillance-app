@@ -92,6 +92,9 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
             <SelectValue placeholder="Sélectionnez le département" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value={"0"} key={0}>
+              Tous
+            </SelectItem>
             {departments.map((item) => (
               <SelectItem value={item.id.toString()} key={item.id}>
                 {item.name}

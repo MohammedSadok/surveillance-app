@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ExamStudentType } from "@/lib/types";
+import axios from "axios";
 import { FileDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -68,9 +69,13 @@ const StudentsList = ({ exam }: StudentsListProps) => {
 
   useEffect(() => {
     (async () => {
-      const f = await fetch(`${exam?.urlFile}`);
-      const ab = await f.arrayBuffer();
-      const wb = read(ab);
+      // const f = await axios.get(`${exam?.urlFile}`, {
+      //   responseType: "arraybuffer",
+      // });
+      const f = await axios.get(`${exam?.urlFile}`, {
+        responseType: "arraybuffer",
+      });
+      const wb = read(f.data);
       const ws = wb.Sheets[wb.SheetNames[0]];
       const newData: Student[] = utils.sheet_to_json(ws);
       setData(newData);
@@ -151,6 +156,7 @@ const StudentsList = ({ exam }: StudentsListProps) => {
       <div className="hidden">
         <div ref={componentRef}>
           {studentsPerLocation?.map((location, locationIndex) => {
+            let studentNumber = 0;
             return (
               <div key={location?.location}>
                 {location?.students.map((chunk, index) => (
@@ -168,10 +174,10 @@ const StudentsList = ({ exam }: StudentsListProps) => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {chunk.map((student) => (
+                      {chunk.map((student, indexStudent) => (
                         <TableRow key={student.id}>
                           <TableCell className="border text-center p-1">
-                            {student.id}
+                            {++studentNumber}
                           </TableCell>
                           <TableCell className="border text-center p-1">
                             {student.firstName}
