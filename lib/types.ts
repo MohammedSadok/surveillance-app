@@ -28,9 +28,8 @@ type MonitoringLineType = MonitoringLine & {
 };
 
 export type ExamStudentType =
-  | (Exam & {
+  | Exam & {
       moduleResponsible: Teacher;
       TimeSlot: TimeSlot;
       Monitoring: (Monitoring & { location: Location | null })[];
-    })
-  | null;
+    };

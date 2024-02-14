@@ -38,7 +38,7 @@ const StudentsList = ({ exam }: StudentsListProps) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-  let studentsNumber = data.length;
+  let studentsNumber = exam.enrolledStudentsCount;
   let start = 0;
   const studentsPerLocation = exam?.Monitoring.map((item) => {
     if (item.location && item.location.size > 0) {
@@ -69,9 +69,6 @@ const StudentsList = ({ exam }: StudentsListProps) => {
 
   useEffect(() => {
     (async () => {
-      // const f = await axios.get(`${exam?.urlFile}`, {
-      //   responseType: "arraybuffer",
-      // });
       const f = await axios.get(`${exam?.urlFile}`, {
         responseType: "arraybuffer",
       });
@@ -131,7 +128,7 @@ const StudentsList = ({ exam }: StudentsListProps) => {
             />
           </PaginationItem>
           {Array.from(
-            { length: Math.ceil(data.length / itemsPerPage) },
+            { length: Math.ceil(exam.enrolledStudentsCount / itemsPerPage) },
             (_, index) => (
               <PaginationItem key={index + 1} className="hover:cursor-pointer">
                 <PaginationLink
@@ -146,7 +143,8 @@ const StudentsList = ({ exam }: StudentsListProps) => {
           <PaginationItem className="hover:cursor-pointer">
             <PaginationNext
               onClick={() =>
-                currentPage < Math.ceil(data.length / itemsPerPage) &&
+                currentPage <
+                  Math.ceil(exam.enrolledStudentsCount / itemsPerPage) &&
                 handlePageChange(currentPage + 1)
               }
             />

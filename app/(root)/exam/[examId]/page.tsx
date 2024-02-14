@@ -1,6 +1,5 @@
 import StudentsList from "@/components/StudentsList";
 import db from "@/lib/db";
-import { ExamStudentType } from "@/lib/types";
 
 type ExamPageProps = {
   params: { examId: string };
@@ -8,7 +7,7 @@ type ExamPageProps = {
 
 const ExamPage = async ({ params }: ExamPageProps) => {
   const id = parseInt(params.examId);
-  const exam: ExamStudentType = await db.exam.findFirst({
+  const exam = await db.exam.findUnique({
     where: { id: id },
     include: {
       moduleResponsible: true,
@@ -16,7 +15,10 @@ const ExamPage = async ({ params }: ExamPageProps) => {
       Monitoring: { include: { location: true } },
     },
   });
-  return <StudentsList exam={exam} />;
+  if (exam) {
+    return <StudentsList exam={exam} />;
+  }
+  return null;
 };
 
 export default ExamPage;
