@@ -94,10 +94,19 @@ model Exam {
   enrolledStudentsCount Int
   timeSlotId            Int
   responsibleId         Int
-  urlFile               String
   moduleResponsible     Teacher      @relation(fields: [responsibleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   TimeSlot              TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Monitoring            Monitoring[]
+  students              Student[]
+}
+
+model Student {
+  id        Int    @id @default(autoincrement())
+  number    Int
+  firstName String
+  lastName  String
+  examId    Int
+  Exam      Exam   @relation(fields: [examId], references: [id])
 }
 
 model Teacher {

@@ -1,6 +1,6 @@
 import { getLocationsForExam, getTeachersForExam } from "@/data/exam";
 import db from "@/lib/db";
-import { ExamSchema } from "@/lib/validator";
+import { ExamSchemaApi } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -54,14 +54,16 @@ import { z } from "zod";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("=>  POST  body:", body);
     const {
       moduleName,
       options,
       responsibleId,
       enrolledStudentsCount,
       timeSlotId,
-      urlFile,
-    } = ExamSchema.parse(body);
+      students,
+    } = ExamSchemaApi.parse(body);
+    console.log("=>  POST  students:", students);
 
     const { examRooms, remainingStudent } = await getLocationsForExam(
       timeSlotId,
@@ -95,7 +97,7 @@ export async function POST(req: Request) {
         enrolledStudentsCount,
         timeSlotId,
         responsibleId,
-        urlFile,
+        students: { create: students },
         Monitoring: {
           create: [
             {

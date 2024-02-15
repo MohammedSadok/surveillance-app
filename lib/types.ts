@@ -26,10 +26,15 @@ export type TeacherMonitoringData = Teacher & {
 type MonitoringLineType = MonitoringLine & {
   monitoring: Monitoring & { exam: Exam | null; location: Location | null };
 };
-
+export type Student = {
+  number: number;
+  firstName: string;
+  lastName: string;
+};
 export type ExamStudentType =
   | Exam & {
-      moduleResponsible: Teacher;
+      moduleResponsible: Teacher | null;
       TimeSlot: TimeSlot;
       Monitoring: (Monitoring & { location: Location | null })[];
+      students: Student[];
     };

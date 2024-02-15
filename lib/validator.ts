@@ -48,6 +48,12 @@ export const LocationSchema = z.object({
   }),
 });
 
+const StudentSchema = z.object({
+  number: z.number(),
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
 export const ExamSchema = z.object({
   moduleName: z.string().min(3, {
     message: "Le nom doit contenir au moins 3 caractères.",
@@ -64,9 +70,25 @@ export const ExamSchema = z.object({
   timeSlotId: z.number().int().min(1, {
     message: "L'identifiant de l'intervalle de temps est requis.",
   }),
-  urlFile: z.string().min(1, {
-    message: "Le fichier Excel est requis",
+  urlFile: z.instanceof(File).nullable(),
+});
+export const ExamSchemaApi = z.object({
+  moduleName: z.string().min(3, {
+    message: "Le nom doit contenir au moins 3 caractères.",
   }),
+  options: z.string().min(3, {
+    message: "Le champ des options doit contenir au moins 3 caractères.",
+  }),
+  enrolledStudentsCount: z.number().int().min(1, {
+    message: "Le nombre d'étudiants doit être positif.",
+  }),
+  responsibleId: z.number().int().min(1, {
+    message: "Le responsable du module est requis.",
+  }),
+  timeSlotId: z.number().int().min(1, {
+    message: "L'identifiant de l'intervalle de temps est requis.",
+  }),
+  students: z.array(StudentSchema),
 });
 
 export const LoginSchema = z.object({

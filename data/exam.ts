@@ -1,6 +1,17 @@
 "use server";
 import db from "@/lib/db";
-
+export const getStudentsForExam = async (id: number) => {
+  const exam = await db.exam.findUnique({
+    where: { id: id },
+    include: {
+      moduleResponsible: true,
+      TimeSlot: true,
+      Monitoring: { include: { location: true } },
+      students: { select: { number: true, firstName: true, lastName: true } },
+    },
+  });
+  return exam;
+};
 export const getLocationsForExam = async (
   timeSlotId: number,
   enrolledStudentsCount: number

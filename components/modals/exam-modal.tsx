@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
   Dialog,
   DialogContent,
   DialogFooter,
@@ -22,31 +15,43 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useModal } from "@/hooks/useModalStore";
+import { cn } from "@/lib/utils";
+import { ExamSchema } from "@/lib/validator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Department, Teacher } from "@prisma/client";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import axios from "axios";
+import { CheckIcon, Loader2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { read, utils } from "xlsx";
+import * as z from "zod";
+import { Button } from "../ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
+import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useModal } from "@/hooks/useModalStore";
-import { UploadButton } from "@/lib/uploadthing";
-import { cn } from "@/lib/utils";
-import { ExamSchema } from "@/lib/validator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Department, Teacher } from "@prisma/client";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import axios from "axios";
-import { Loader2 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import * as z from "zod";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+} from "../ui/select";
+type Student = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
 const ExamModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const { exam } = data;
@@ -57,7 +62,6 @@ const ExamModal = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>();
   const params = useParams<{ timeSlotId: string }>();
   const router = useRouter();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -114,7 +118,6 @@ const ExamModal = () => {
       form.setValue("options", exam.options);
       form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
       form.setValue("responsibleId", exam.responsibleId);
-      form.setValue("urlFile", exam.urlFile);
     } else {
       form.reset();
     }
@@ -124,22 +127,46 @@ const ExamModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof ExamSchema>) => {
-    const newValues = { ...values, timeSlotId: parseInt(params.timeSlotId) };
-    try {
-      if (type === "createExam") {
-        const response = await axios.post("/api/exams", newValues);
-        if (response.data.error) {
-          toast.error(response.data.error);
+    const file = values.urlFile as File;
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      const target = event?.target;
+      if (target instanceof FileReader) {
+        const binaryString = target.result as string;
+        const workbook = read(binaryString, { type: "binary" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data: Student[] = utils.sheet_to_json(sheet);
+
+        // Update newValues with the correct students data
+        const newValues = {
+          ...values,
+          timeSlotId: parseInt(params.timeSlotId),
+          students: data.slice(0, values.enrolledStudentsCount),
+        };
+
+        try {
+          if (type === "createExam") {
+            const response = await axios.post("/api/exams", newValues);
+            if (response.data.error) {
+              toast.error(response.data.error);
+            }
+          } else {
+            await axios.patch(`/api/exams/${exam?.id}`, newValues);
+          }
+          form.reset();
+          setSelectedTeacher(null);
+          router.refresh();
+          onClose();
+        } catch (error) {
+          console.log(error);
         }
-      } else axios.patch(`/api/exams/${exam?.id}`, newValues);
-      form.reset();
-      setSelectedTeacher(null);
-      router.refresh();
-      onClose();
-    } catch (error) {
-      console.log(error);
-    }
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
   };
+
   const handleClose = () => {
     form.reset();
     onClose();
@@ -296,19 +323,21 @@ const ExamModal = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col items-start space-y-2 min-w-max">
                     <FormLabel>Uploader un ficher excel</FormLabel>
-                    <UploadButton
-                      endpoint="fileUploader"
-                      onClientUploadComplete={(res) => {
-                        form.setValue("urlFile", res[0].url);
-                      }}
-                      onUploadError={(error: Error) => {
-                        alert(`ERROR! ${error.message}`);
-                      }}
-                      appearance={{
-                        allowedContent: "hidden",
-                        button: "bg-gray-800 text-sm h-7 w-28",
+                    <Input
+                      accept=".xlsx, .xls"
+                      type="file"
+                      disabled={isLoading}
+                      placeholder="Entrez le nombre d'étudiants inscrits"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          field.onChange(file);
+                        }
                       }}
                     />
+                    <FormMessage>
+                      {form.formState.errors?.urlFile?.message}
+                    </FormMessage>
                     <FormMessage />
                   </FormItem>
                 )}
