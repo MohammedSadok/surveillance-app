@@ -106,7 +106,7 @@ model Student {
   firstName String
   lastName  String
   examId    Int
-  Exam      Exam   @relation(fields: [examId], references: [id])
+  Exam      Exam   @relation(fields: [examId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Teacher {

@@ -130,7 +130,15 @@ CREATE TABLE `Location` (
     `type` ENUM('CLASSROOM', 'AMPHITHEATER') NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE TABLE `Student` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `number` INTEGER NOT NULL,
+    `firstName` VARCHAR(191) NOT NULL,
+    `lastName` VARCHAR(191) NOT NULL,
+    `examId` INTEGER NOT NULL,
 
+    PRIMARY KEY (`id`)
+)  ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 -- AddForeignKey
 ALTER TABLE `Account` ADD CONSTRAINT `Account_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -160,3 +168,6 @@ ALTER TABLE `MonitoringLine` ADD CONSTRAINT `MonitoringLine_teacherId_fkey` FORE
 
 -- AddForeignKey
 ALTER TABLE `MonitoringLine` ADD CONSTRAINT `MonitoringLine_monitoringId_fkey` FOREIGN KEY (`monitoringId`) REFERENCES `Monitoring`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Student` ADD CONSTRAINT `Student_examId_fkey` FOREIGN KEY (`examId`) REFERENCES `Exam`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

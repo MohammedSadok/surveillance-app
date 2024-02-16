@@ -111,3 +111,7 @@ export const RegisterSchema = z.object({
     message: "Le nom est requis",
   }),
 });
+
+export const sessionsSchema = z.object({
+  type: z.enum(["validate", "cancel"]),
+});

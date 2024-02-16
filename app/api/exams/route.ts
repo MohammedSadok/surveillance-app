@@ -1,4 +1,4 @@
-import { getLocationsForExam, getTeachersForExam } from "@/data/exam";
+import { getLocationsForExam } from "@/data/exam";
 import db from "@/lib/db";
 import { ExamSchemaApi } from "@/lib/validator";
 import { NextResponse } from "next/server";
@@ -54,7 +54,6 @@ import { z } from "zod";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    console.log("=>  POST  body:", body);
     const {
       moduleName,
       options,
@@ -63,13 +62,11 @@ export async function POST(req: Request) {
       timeSlotId,
       students,
     } = ExamSchemaApi.parse(body);
-    console.log("=>  POST  students:", students);
 
     const { examRooms, remainingStudent } = await getLocationsForExam(
       timeSlotId,
       enrolledStudentsCount
     );
-    const teachers = await getTeachersForExam(timeSlotId, responsibleId);
 
     if (remainingStudent > 0) {
       return NextResponse.json({
@@ -77,19 +74,6 @@ export async function POST(req: Request) {
       });
     }
 
-    let neededTeacherNumber = 0;
-    examRooms.forEach((location) => {
-      neededTeacherNumber += location.type === "AMPHITHEATER" ? 3 : 2;
-    });
-
-    if (neededTeacherNumber >= teachers.length) {
-      return NextResponse.json({
-        error: "nombre des enseignant insuffisant pour passer l'examen",
-      });
-    }
-
-    const neededTeacher = teachers.slice(0, neededTeacherNumber);
-    let teacherIndex = 0;
     const exam = await db.exam.create({
       data: {
         moduleName,
@@ -106,20 +90,8 @@ export async function POST(req: Request) {
             },
 
             ...examRooms.flatMap((room, index) => {
-              const numTeachers = room.type === "AMPHITHEATER" ? 3 : 2;
-              const monitoringLines = [];
-
-              for (let i = 0; i < numTeachers; i++, teacherIndex++) {
-                monitoringLines.push({
-                  teacherId: neededTeacher[teacherIndex],
-                });
-              }
-
               return {
                 locationId: room.id,
-                monitoringLines: {
-                  create: monitoringLines,
-                },
               };
             }),
           ],

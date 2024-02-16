@@ -106,21 +106,12 @@ const ExamModal = () => {
     }
   }, [department, isOpen, params.timeSlotId]);
 
-  const isModalOpen =
-    isOpen && (type === "createExam" || type === "updateExam");
+  const isModalOpen = isOpen && type === "createExam";
 
   const form = useForm<z.infer<typeof ExamSchema>>({
     resolver: zodResolver(ExamSchema),
   });
   useEffect(() => {
-    if (exam) {
-      form.setValue("moduleName", exam.moduleName);
-      form.setValue("options", exam.options);
-      form.setValue("enrolledStudentsCount", exam.enrolledStudentsCount);
-      form.setValue("responsibleId", exam.responsibleId);
-    } else {
-      form.reset();
-    }
     form.setValue("timeSlotId", parseInt(params.timeSlotId));
   }, [exam, form, params.timeSlotId, isOpen]);
 
@@ -146,14 +137,11 @@ const ExamModal = () => {
         };
 
         try {
-          if (type === "createExam") {
-            const response = await axios.post("/api/exams", newValues);
-            if (response.data.error) {
-              toast.error(response.data.error);
-            }
-          } else {
-            await axios.patch(`/api/exams/${exam?.id}`, newValues);
+          const response = await axios.post("/api/exams", newValues);
+          if (response.data.error) {
+            toast.error(response.data.error);
           }
+
           form.reset();
           setSelectedTeacher(null);
           router.refresh();

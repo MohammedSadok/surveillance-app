@@ -59,10 +59,7 @@ export const getLocationsForExam = async (
   return { examRooms, remainingStudent: enrolledStudentsCount };
 };
 
-export const getTeachersForExam = async (
-  timeSlotId: number,
-  responsibleId: number
-) => {
+export const getTeachersForExam = async (timeSlotId: number) => {
   const avgTeachers = await db.monitoringLine.groupBy({
     by: ["teacherId"],
     _count: {
@@ -70,22 +67,17 @@ export const getTeachersForExam = async (
     },
     orderBy: { _count: { id: "asc" } },
     where: {
-      AND: [
-        {
-          teacher: {
-            monitoringLines: {
-              none: {
-                monitoring: {
-                  exam: {
-                    timeSlotId: timeSlotId,
-                  },
-                },
+      teacher: {
+        monitoringLines: {
+          none: {
+            monitoring: {
+              exam: {
+                timeSlotId: timeSlotId,
               },
             },
           },
         },
-        { NOT: { teacherId: responsibleId } },
-      ],
+      },
     },
   });
 
@@ -99,7 +91,7 @@ export const getTeachersForExam = async (
       AND: [
         {
           id: {
-            notIn: [...avgTeachersIds, responsibleId],
+            notIn: avgTeachersIds,
           },
         },
         {
@@ -132,7 +124,7 @@ export const getTeachersForExam = async (
       AND: [
         {
           id: {
-            in: [...avgTeachersIds, responsibleId],
+            in: avgTeachersIds,
           },
         },
         {
