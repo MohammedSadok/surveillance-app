@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  email    String? @unique
+  image    String?
+  password String?
+}
+
+model SessionExam {
+  id          Int      @id @default(autoincrement())
+  isValidated Boolean  @default(false)
+  type        String
+  startDate   DateTime @db.Date()
+  endDate     DateTime @db.Date()
+  day         Day[]
+}
+
+model Day {
+  id            Int         @id @default(autoincrement())
+  date          DateTime    @db.Date()
+  sessionExam   SessionExam @relation(fields: [sessionExamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sessionExamId Int
+  timeSlot      TimeSlot[]
+}
+
+enum TimePeriod {
+  MORNING
+  AFTERNOON
+}
+
+model TimeSlot {
+  id         Int        @id @default(autoincrement())
+  timePeriod TimePeriod
+  period     String
+  dayId      Int
+  day        Day        @relation(fields: [dayId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Exam       Exam[]
+}
+
+model Department {
+  id       Int       @id @default(autoincrement())
+  name     String
+  Teachers Teacher[]
+}
+
+model Exam {
+  id                    Int          @id @default(autoincrement())
+  moduleName            String
+  options               String
+  enrolledStudentsCount Int
+  timeSlotId            Int
+  responsibleId         Int
+  moduleResponsible     Teacher      @relation(fields: [responsibleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  TimeSlot              TimeSlot     @relation(fields: [timeSlotId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Monitoring            Monitoring[]
+  students              Student[]
+}
+
+model Student {
+  id        Int    @id @default(autoincrement())
+  number    Int
+  firstName String
+  lastName  String
+  examId    Int
+  Exam      Exam   @relation(fields: [examId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Teacher {
+  id              Int              @id @default(autoincrement())
+  lastName        String
+  firstName       String
+  phoneNumber     String
+  email           String
+  departmentId    Int
+  department      Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  monitoringLines MonitoringLine[]
+  Exam            Exam[]
+}
+
+model Monitoring {
+  id              Int              @id @default(autoincrement())
+  exam            Exam             @relation(fields: [examId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  examId          Int
+  location        Location?        @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  locationId      Int?
+  monitoringLines MonitoringLine[]
+}
+
+model MonitoringLine {
+  id           Int        @id @default(autoincrement())
+  teacherId    Int
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  monitoringId Int
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum RoomType {
+  CLASSROOM
+  AMPHITHEATER
+}
+
+model Location {
+  id         Int          @id @default(autoincrement())
+  name       String
+  size       Int
+  type       RoomType
+  Monitoring Monitoring[]
+}
