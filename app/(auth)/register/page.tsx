@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
-import scheduleImage from "@/assets/images/schedule.png";
 import RegisterForm from "@/components/auth/register-form";
 import { ModeToggle } from "@/components/mode-toggle";
+import scheduleImage from "@/images/schedule.png";
 import Image from "next/image";
 export const metadata: Metadata = {
   title: "Authentification",
@@ -42,18 +42,6 @@ export default function AuthenticationPage() {
               objectFit: "contain",
             }}
           />
-        </div>
-        <div className="relative  mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg text-justify">
-              Notre plateforme constitue une solution intégrale dédiée à la
-              supervision des salles d'examen. Bénéficiez d'un processus
-              d'authentification sécurisé spécifiquement conçu pour les
-              administrateurs, favorisant une surveillance efficiente des
-              examens
-            </p>
-            <footer className="text-sm">FS Eljadida</footer>
-          </blockquote>
         </div>
       </div>
       <div className="lg:p-8">

@@ -105,7 +105,7 @@ const RegisterForm = () => {
           <FormError message={error} />
           <Button disabled={isPending} className="w-full">
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Se connecter avec l'email
+            Se connecter avec l&apos;email
           </Button>
         </form>
       </Form>

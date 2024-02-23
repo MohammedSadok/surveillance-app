@@ -66,7 +66,7 @@ const ExamModal = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/department`
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/departments`
         );
         setDepartments(response.data);
       } catch (error) {
@@ -209,7 +209,7 @@ const ExamModal = () => {
                 defaultValue={0}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nombre d'étudiants inscrits</FormLabel>
+                    <FormLabel>Nombre d&apos;étudiants inscrits</FormLabel>
                     <Input
                       disabled={isLoading}
                       placeholder="Entrez le nombre d'étudiants inscrits"

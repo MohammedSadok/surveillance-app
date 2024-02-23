@@ -37,7 +37,7 @@ const DashboardPage = async () => {
             <CardContent>
               <div className="text-2xl font-bold">{numberOfExams}</div>
               <p className="text-xs text-muted-foreground">
-                Nombre total d'exams du dernier session
+                Nombre total d&apos;exams du dernier session
               </p>
             </CardContent>
           </Card>
@@ -49,7 +49,7 @@ const DashboardPage = async () => {
             <CardContent>
               <div className="text-2xl font-bold">{numberOfTeachers}</div>
               <p className="text-xs text-muted-foreground">
-                Nombre total d'enseignants dans la faculte
+                Nombre total d&apos;enseignants dans la faculte
               </p>
             </CardContent>
           </Card>

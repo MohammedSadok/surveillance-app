@@ -43,18 +43,6 @@ export default function AuthenticationPage() {
             }}
           />
         </div>
-        <div className="relative  mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg text-justify">
-              Notre plateforme constitue une solution intégrale dédiée à la
-              supervision des salles d'examen. Bénéficiez d'un processus
-              d'authentification sécurisé spécifiquement conçu pour les
-              administrateurs, favorisant une surveillance efficiente des
-              examens
-            </p>
-            <footer className="text-sm">FS Eljadida</footer>
-          </blockquote>
-        </div>
       </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">

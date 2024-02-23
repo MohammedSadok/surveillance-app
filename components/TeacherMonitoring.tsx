@@ -86,13 +86,14 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
     if (monitoringDay.length > 0) {
       handlePrintDay();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monitoringDay]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/department`
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/departments`
         );
         setDepartments(response.data);
       } catch (error) {
@@ -150,11 +151,12 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
             <SelectItem value={"0"} key={0}>
               Tous
             </SelectItem>
-            {departments.map((item) => (
-              <SelectItem value={item.id.toString()} key={item.id}>
-                {item.name}
-              </SelectItem>
-            ))}
+            {departments.length &&
+              departments.map((item) => (
+                <SelectItem value={item.id.toString()} key={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         <Button onClick={handlePrint} variant="ghost">
