@@ -91,16 +91,19 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/departments`
         );
         setDepartments(response.data);
+        setLoading(false);
       } catch (error) {
         console.error(
           "Erreur lors de la récupération des départements :",
           error
         );
+        setLoading(false);
       }
     };
     fetchData();
@@ -108,11 +111,13 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const monitoring: TeacherMonitoringData[] = await getMonitoring(
         department,
         parseInt(sessionId)
       );
       setMonitoring(monitoring);
+      setLoading(false);
     };
     fetchData();
   }, [department, sessionId]);
@@ -164,13 +169,15 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
         </Button>
       </div>
       {loading ? (
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="flex justify-center items-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
       ) : (
         <Table className="border rounded-lg">
           <TableHeader>
             <TableRow>
               <TableCell className="border text-center" rowSpan={2}>
-                Jours
+                Enseignants
               </TableCell>
 
               <TableCell className="border text-center " colSpan={4}>
