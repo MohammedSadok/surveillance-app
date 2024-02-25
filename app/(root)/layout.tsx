@@ -3,7 +3,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import React from "react";
-import { UserNav } from "../../components/user-nav";
 const pagesLayout = ({
   children,
 }: Readonly<{
@@ -15,7 +14,7 @@ const pagesLayout = ({
         <div className="container flex h-16 items-center justify-between py-4">
           <MainNav />
           <div className="flex justify-center items-center space-x-2">
-            <UserNav />
+            {/* <UserNav /> */}
             <ModeToggle />
           </div>
         </div>

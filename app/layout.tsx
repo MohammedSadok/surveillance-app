@@ -22,21 +22,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  // const session = await auth();
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body
-          className={cn(
-            "h-screen bg-background font-sans antialiased w-screen",
-            fontSans.variable
-          )}
-        >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </SessionProvider>
+    // <SessionProvider session={session}>
+    <html lang="en">
+      <body
+        className={cn(
+          "h-screen bg-background font-sans antialiased w-screen",
+          fontSans.variable
+        )}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+    // </SessionProvider>
   );
 }
