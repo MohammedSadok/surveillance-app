@@ -53,7 +53,7 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
                 <TableBody>
                   {teachersWithMonitoring.map((teacher) => (
                     <TableRow key={teacher.id} className="py-4">
-                      <TableCell className="border text-center">
+                      <TableCell className="border text-center text-xs p-1">
                         {teacher.firstName + " " + teacher.lastName}
                       </TableCell>
                       {day.timeSlot.map((timeSlotItem) => {
@@ -65,7 +65,7 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
                         return (
                           <TableCell
                             key={timeSlotItem.id}
-                            className="border text-center text-s"
+                            className="border text-center text-xs p-1"
                           >
                             {monitoringLine ? (
                               <span>

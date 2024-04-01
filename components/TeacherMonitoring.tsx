@@ -280,11 +280,12 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <div className="hidden">
         <div ref={componentRef}>
-          <h1 className="uppercase m-2">
+          <p className="capitalize text-xl">
             {department !== 0
-              ? departments.find((dep) => dep.id == department)?.name
+              ? "Département: " +
+                departments.find((dep) => dep.id == department)?.name
               : null}
-          </h1>
+          </p>
           <PrintTeacherMonitoring
             monitoring={monitoring}
             sessionDays={sessionDays}
@@ -294,11 +295,12 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <div className="hidden">
         <div ref={dayRef}>
-          <h1 className="uppercase m-2">
+          <p className="capitalize text-xl">
             {department !== 0
-              ? departments.find((dep) => dep.id == department)?.name
+              ? "Département: " +
+                departments.find((dep) => dep.id == department)?.name
               : null}
-          </h1>
+          </p>
           <PrintDayMonitoring monitoringDay={monitoringDay} />
         </div>
       </div>

@@ -1,26 +1,25 @@
 "use client";
 import { useCurrentUser } from "@/hooks/getCurrentUser";
+import logo from "@/images/logo.png";
 import { cn } from "@/lib/utils";
-import {
-  BookOpen,
-  Building2,
-  CalendarDays,
-  Command,
-  Users,
-} from "lucide-react";
+import { BookOpen, Building2, CalendarDays, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 export function MainNav() {
   const path = usePathname();
   const user = useCurrentUser();
   return (
-    <div className="flex gap-2 md:gap-10">
+    <div className="flex gap-2 md:gap-10 items-center">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
-        <Command />
-        <span className="hidden font-bold sm:inline-block">
-          SurveillanceApp
-        </span>
+        <Image
+          src={logo}
+          alt={""}
+          style={{
+            objectFit: "contain",
+          }}
+          className="w-[120px]"
+        />
       </Link>
       <nav className="hidden gap-2 md:flex">
         <Link href="/sessions">
