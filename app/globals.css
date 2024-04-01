@@ -92,7 +92,7 @@
 
 @media print {
   .page-break {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     display: block;
     /* page-break-before: always; */
   }
@@ -104,5 +104,5 @@
 }
 @page {
   size: auto;
-  margin: 20mm;
+  margin: 15mm;
 }

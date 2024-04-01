@@ -13,7 +13,7 @@ interface Props {
   students: PageTypeStudent;
 }
 
-const PrintStudents: React.FC<Props> = ({ students }) => {
+const PrintStudentPresent: React.FC<Props> = ({ students }) => {
   return (
     <>
       {students?.map((location, locationIndex) => {
@@ -41,11 +41,17 @@ const PrintStudents: React.FC<Props> = ({ students }) => {
                 <Table className="border rounded-lg h-full" key={index}>
                   <TableHeader>
                     <TableRow className="border text-center">
-                      <TableHead key="numero" className="border text-center">
+                      <TableHead
+                        key="numero"
+                        className="border text-center w-1/3"
+                      >
                         Numéro
                       </TableHead>
-                      <TableHead key="nom" className="border text-center">
+                      <TableHead key="nom" className="border text-center w-1/3">
                         Nom et prénom
+                      </TableHead>
+                      <TableHead key="nom" className="border text-center w-1/3">
+                        Signature
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -58,6 +64,7 @@ const PrintStudents: React.FC<Props> = ({ students }) => {
                         <TableCell className="border text-center text-xs p-0.5">
                           {student.firstName}
                         </TableCell>
+                        <TableCell className="border text-center text-xs p-0.5"></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -74,4 +81,4 @@ const PrintStudents: React.FC<Props> = ({ students }) => {
   );
 };
 
-export default PrintStudents;
+export default PrintStudentPresent;

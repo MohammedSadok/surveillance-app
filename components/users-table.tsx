@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@prisma/client";
-import { Check, Trash2, X } from "lucide-react";
+import { Check, FilePenLine, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -56,7 +56,7 @@ const UsersTable = ({ Users }: Props) => {
             <TableHead className="text-center">Name</TableHead>
             <TableHead className="text-center">Email</TableHead>
             <TableHead className="text-center">Admin</TableHead>
-            <TableHead className="text-center">Delete</TableHead>
+            <TableHead className="text-center">Options</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -72,9 +72,12 @@ const UsersTable = ({ Users }: Props) => {
                     <Check className="w-5 h-5 m-auto" />
                   )}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-center space-x-3">
                   <Button variant="outline" onClick={() => handleSelect(user)}>
                     <Trash2 className="w-5 h-5 text-red-500" />
+                  </Button>
+                  <Button variant="outline" onClick={() => handleSelect(user)}>
+                    <FilePenLine className="w-5 h-5 text-blue-500" />
                   </Button>
                 </TableCell>
               </TableRow>

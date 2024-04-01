@@ -44,7 +44,17 @@ export type Student = {
 export type ExamStudentType =
   | Exam & {
       moduleResponsible: Teacher | null;
-      TimeSlot: TimeSlot;
+      TimeSlot: timeSlotType;
       Monitoring: (Monitoring & { location: Location | null })[];
       students: Student[];
     };
+
+export type PageTypeStudent = (
+  | {
+      timeSlot: timeSlotType;
+      exam: ExamType;
+      location: Location;
+      students: Student[][];
+    }
+  | undefined
+)[];

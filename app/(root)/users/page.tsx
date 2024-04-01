@@ -2,14 +2,17 @@ import RegisterForm from "@/components/auth/register-form";
 import UsersTable from "@/components/users-table";
 
 import db from "@/lib/db";
+import { UserClient } from "./components/Client";
 
 const UsersPage = async () => {
-  const Users = await db.user.findMany();
+  const users = await db.user.findMany();
 
   return (
     <div className="flex space-x-10">
-      <RegisterForm />
-      <UsersTable Users={Users} />
+      <UserClient data={users} />
+
+      {/* <RegisterForm />
+      <UsersTable Users={Users} /> */}
     </div>
   );
 };

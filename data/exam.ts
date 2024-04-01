@@ -5,7 +5,7 @@ export const getStudentsForExam = async (id: number) => {
     where: { id: id },
     include: {
       moduleResponsible: true,
-      TimeSlot: true,
+      TimeSlot: { include: { day: true } },
       Monitoring: { include: { location: true } },
       students: { select: { number: true, firstName: true, lastName: true } },
     },
