@@ -6,6 +6,7 @@ import ExamModal from "@/components/modals/exam-modal";
 import LocalModal from "@/components/modals/local-modal";
 import SessionModal from "@/components/modals/session-modal";
 import { useEffect, useState } from "react";
+import UserModal from "@/components/modals/user-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -25,6 +26,7 @@ export const ModalProvider = () => {
       <EnseignantModal />
       <DepartementModal />
       <SessionModal />
+      <UserModal />
     </>
   );
 };

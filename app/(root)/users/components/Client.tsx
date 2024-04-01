@@ -8,7 +8,6 @@ import { useModal } from "@/hooks/useModalStore";
 import { User } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { columns } from "./Columns";
-
 interface UserClientProps {
   data: User[];
 }
@@ -19,15 +18,15 @@ export const UserClient: React.FC<UserClientProps> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Sessions (${data.length})`}
-          description="Gérer les sessions"
+          title={`Utilisateurs (${data.length})`}
+          description="Gérer les Utilisateur"
         />
-        <Button onClick={() => onOpen("createSession")}>
-          <Plus className="mr-2 h-4 w-4" /> Ajouter une nouvelle session
+        <Button onClick={() => onOpen("createUser")}>
+          <Plus className="mr-2 h-4 w-4" /> Ajouter un nouvel utilisateur
         </Button>
       </div>
       <Separator />
-      <DataTable searchKey="type" columns={columns} data={data} />
+      <DataTable searchKey="name" columns={columns} data={data} />
     </>
   );
 };

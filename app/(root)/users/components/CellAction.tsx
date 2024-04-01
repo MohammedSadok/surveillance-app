@@ -1,58 +1,45 @@
+"use client";
+import { AlertModal } from "@/components/modals/alert-modal";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useCurrentUser } from "@/hooks/getCurrentUser";
+import { useModal } from "@/hooks/useModalStore";
+import { User } from "@prisma/client";
 import axios from "axios";
-import { Ban, CheckCircle, Trash } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-
-import { AlertModal } from "@/components/modals/alert-modal";
-import { Button } from "@/components/ui/button";
-import { User } from "@prisma/client";
 
 interface CellActionProps {
   data: User;
 }
 
-type Actions = "delete" | "validate" | "cancel";
-
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+  const user = useCurrentUser();
+  const { onOpen } = useModal();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState<Actions | null>(null);
 
-  const performAction = async (confirmedAction: Actions) => {
+  const onConfirm = async () => {
     try {
       setLoading(true);
-      const typeAction = { type: confirmedAction };
-      const endpoint =
-        confirmedAction === "delete"
-          ? `/api/sessions/${data.id}`
-          : `/api/sessions/${data.id}`;
-      await axios[confirmedAction === "delete" ? "delete" : "post"](
-        endpoint,
-        typeAction
-      );
-      toast.success(
-        confirmedAction === "delete"
-          ? "Session supprimée."
-          : confirmedAction === "validate"
-          ? "Session validée."
-          : "Session annulée."
-      );
+      await axios.delete(`/api/user/${data.id}`);
+      toast.success("Utilisateur supprimé.");
       router.refresh();
     } catch (error) {
-      toast.error(
-        "Assurez-vous d'avoir d'abord supprimé toutes les données de cette session."
-      );
+      toast.error("il y a une erreur essayez une autre fois !");
     } finally {
       setOpen(false);
       setLoading(false);
     }
-  };
-
-  const handleButtonClick = (confirmedAction: Actions) => {
-    setAction(confirmedAction);
-    setOpen(true);
   };
 
   return (
@@ -60,26 +47,30 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onConfirm={() => action && performAction(action)}
+        onConfirm={onConfirm}
         loading={loading}
       />
-
-      <Button variant="ghost" onClick={() => handleButtonClick("delete")}>
-        <Trash className="h-4 w-4" color="#c1121f" />
-      </Button>
-
-      {/* <Button
-        variant="ghost"
-        onClick={() =>
-          handleButtonClick(data.isValidated ? "cancel" : "validate")
-        }
-      >
-        {data.isValidated ? (
-          <Ban className="mr-l h-4 w-4" color="#368a1c" />
-        ) : (
-          <CheckCircle className="mr-l h-4 w-4" color="#2770a5" />
-        )}
-      </Button> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Ouvrir le menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => onOpen("updateUser", { user: data })}
+          >
+            <Edit className="mr-2 h-4 w-4" /> Mettre à jour
+          </DropdownMenuItem>
+          {data.email !== user?.email ? (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <Trash className="mr-2 h-4 w-4" /> Supprimer
+            </DropdownMenuItem>
+          ) : null}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 };

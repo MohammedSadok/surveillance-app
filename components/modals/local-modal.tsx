@@ -149,8 +149,10 @@ const LocalModal = () => {
               <Button disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
+                ) : type === "createBuilding" ? (
                   "Créer"
+                ) : (
+                  "Mettre à jour"
                 )}
               </Button>
             </DialogFooter>

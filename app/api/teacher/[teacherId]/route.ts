@@ -8,7 +8,7 @@ export async function DELETE(
 ) {
   try {
     if (!params.teacherId) {
-      return new NextResponse("Session id is required", { status: 400 });
+      return new NextResponse("User id is required", { status: 400 });
     }
     const teacher = await db.teacher.delete({
       where: {
@@ -28,7 +28,7 @@ export async function PATCH(
 ) {
   try {
     if (!params.teacherId) {
-      return new NextResponse("Local id is required", { status: 400 });
+      return new NextResponse("user id is required", { status: 400 });
     }
     const body = await req.json();
     const { firstName, lastName, phoneNumber, email, departmentId } =
@@ -47,7 +47,7 @@ export async function PATCH(
     });
     return NextResponse.json(teacher);
   } catch (error) {
-    console.log("[DEPARTMENT_UPDATE]", error);
+    console.log("[USER_UPDATE]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
