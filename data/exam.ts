@@ -86,7 +86,6 @@ export const getTeachersForExam = async (timeSlotId: number) => {
   );
 
   const freeTeachers = await db.teacher.findMany({
-    select: { id: true },
     where: {
       AND: [
         {
@@ -118,45 +117,37 @@ export const getTeachersForExam = async (timeSlotId: number) => {
     where: { id: timeSlotId },
   });
 
-  const teachersInSamePeriod = await db.teacher.findMany({
-    select: { id: true },
+  const monitoringInTheSameDay = await db.monitoring.findMany({
+    include: {
+      location: true,
+      monitoringLines: { include: { teacher: true } },
+    },
     where: {
-      AND: [
-        {
-          id: {
-            in: avgTeachersIds,
-          },
-        },
-        {
-          monitoringLines: {
-            some: {
-              monitoring: {
-                exam: {
-                  TimeSlot: { dayId: day?.dayId, timePeriod: day?.timePeriod },
-                },
-              },
+      NOT: {
+        location: null,
+      },
+      monitoringLines: {
+        some: {
+          monitoring: {
+            exam: {
+              TimeSlot: { dayId: day?.dayId, timePeriod: day?.timePeriod },
             },
           },
         },
-      ],
+      },
     },
   });
-  const teachersInSamePeriodIds: number[] = teachersInSamePeriod.map(
-    ({ id }) => id
-  );
-  freeTeacherIds.sort((a, b) => {
-    const indexA = teachersInSamePeriodIds.indexOf(a);
-    const indexB = teachersInSamePeriodIds.indexOf(b);
-    if (indexA !== -1 && indexB !== -1) {
-      return indexA - indexB;
+
+  let locationTeachersMap = new Map<number, number[]>();
+  // Fill the Map with data
+  monitoringInTheSameDay.forEach((item) => {
+    if (item.location) {
+      const locationId = item.location.id;
+      const teacherIds: number[] = item.monitoringLines.map(
+        ({ teacherId }) => teacherId
+      );
+      locationTeachersMap.set(locationId, teacherIds);
     }
-    if (indexA !== -1) {
-      return -1;
-    }
-    if (indexB !== -1) {
-      return 1;
-    }
-    return 0;
   });
-  return freeTeacherIds;
+  return { freeTeacherIds, locationTeachersMap };
 };

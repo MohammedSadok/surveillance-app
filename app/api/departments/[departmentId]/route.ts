@@ -27,12 +27,12 @@ export async function DELETE(
     if (!params.departmentId) {
       return new NextResponse("Department id is required", { status: 400 });
     }
-    const exam = await db.department.delete({
+    const department = await db.department.delete({
       where: {
         id: parseInt(params.departmentId),
       },
     });
-    return NextResponse.json(exam);
+    return NextResponse.json(department);
   } catch (error) {
     console.log("[DEPARTMENT_DELETE]", error);
     return new NextResponse("Internal error", { status: 500 });

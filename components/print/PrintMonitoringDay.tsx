@@ -5,79 +5,56 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MonitoringExam } from "@/lib/types";
+import { MonitoringDayState } from "@/lib/types";
 import React from "react";
 
 interface Props {
-  monitoringDay: MonitoringExam[];
+  monitoringDay: MonitoringDayState;
 }
 
-const PrintMonitoringDay = ({ monitoringDay }: Props) => {
+const PrintMonitoringDay: React.FC<Props> = ({ monitoringDay }) => {
   return (
     <div className="space-y-3">
-      {monitoringDay.map(
-        (monitoring) =>
-          monitoring.moduleResponsible !== null && (
-            <div key={monitoring.id}>
-              <div>
-                <h2>Module: {monitoring.moduleName}</h2>
-                <h2>
-                  Responsable du module :
-                  <span className="font-bold">
-                    {monitoring.moduleResponsible.firstName +
-                      " " +
-                      monitoring.moduleResponsible.lastName}
-                  </span>
-                </h2>
-                <h2>
-                  Numero de Telephone :
-                  <span className="font-bold">
-                    {monitoring.moduleResponsible.phoneNumber}
-                  </span>
-                </h2>
-              </div>
-              <Table className="border rounded-lg">
-                <TableHeader>
-                  <TableRow>
-                    <TableCell className="border text-center">local</TableCell>
-                    <TableCell className="border text-center" colSpan={3}>
-                      Ensignants
-                    </TableCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {monitoring.Monitoring.map((line, index) => (
-                    <TableRow className="py-4" key={index}>
-                      <React.Fragment>
-                        {line.location && (
-                          <TableCell className="border text-center text-s">
-                            {isNaN(parseInt(line.location?.name))
-                              ? line.location?.name
-                              : "Salle " + parseInt(line.location?.name)}
-                          </TableCell>
-                        )}
-                        {line.monitoringLines.map((teacher, index) => (
-                          <React.Fragment key={index}>
-                            {line.location && (
-                              <TableCell
-                                key={`${line.id}-${index}`}
-                                className="border text-center text-s"
-                              >
-                                {teacher.teacher.firstName +
-                                  " " +
-                                  teacher.teacher.lastName}
-                              </TableCell>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </React.Fragment>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )
-      )}
+      {Object.entries(monitoringDay).map(([localName, moduleData]) => (
+        <div key={localName}>
+          <Table className="border rounded-lg">
+            <TableHeader>
+              <TableRow>
+                <TableCell className="border text-center text-xs">
+                  Module
+                </TableCell>
+                <TableCell className="border text-center text-xs">
+                  Locale
+                </TableCell>
+                <TableCell className="border text-center text-xs">
+                  Surveillance
+                </TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {moduleData.exams.map((exam, examIndex) => (
+                <TableRow key={examIndex}>
+                  <TableCell className="border  text-xs">
+                    <p>S {examIndex + 1}:</p>
+                    <p>Module: {exam.examDetails.moduleName}</p>
+                    <p>
+                      {exam.examDetails.moduleResponsible?.firstName +
+                        " " +
+                        exam.examDetails.moduleResponsible?.lastName}
+                    </p>
+                  </TableCell>
+                  <TableCell className="border text-center text-xs">
+                    {localName}
+                  </TableCell>
+                  <TableCell className="border text-center text-xs">
+                    {exam.teachers.join(", ")}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ))}
     </div>
   );
 };

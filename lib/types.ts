@@ -24,6 +24,31 @@ export type TeacherMonitoringData = Teacher & {
   monitoringLines: MonitoringLineType[];
 };
 
+export type Exam1 = {
+  examDetails: {
+    id: number;
+    moduleName: string;
+    options: string;
+    enrolledStudentsCount: number;
+    timeSlotId: number;
+    responsibleId?: number | null;
+    moduleResponsible?: ModuleResponsible | null;
+  };
+  teachers: string[];
+};
+
+type ModuleResponsible = {
+  id: number;
+  lastName: string;
+  firstName: string;
+};
+
+export interface MonitoringDayState {
+  [moduleId: string]: {
+    exams: Exam1[];
+  };
+}
+
 type MonitoringLineType = MonitoringLine & {
   monitoring: Monitoring & { exam: Exam | null; location: Location | null };
 };

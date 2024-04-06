@@ -51,7 +51,7 @@ export const getStatisticsOfLasSession = async () => {
     include: { moduleResponsible: true },
     where: {
       AND: [
-        { moduleName: { not: "Reservist" } },
+        { moduleName: { not: "Rs" } },
         { enrolledStudentsCount: { gt: 0 } },
         { TimeSlot: { day: { sessionExamId: lastSession?.id } } },
       ],

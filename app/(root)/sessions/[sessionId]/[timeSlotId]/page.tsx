@@ -16,9 +16,9 @@ const ExamsPage = async ({ params }: Props) => {
 
   const exams = await db.exam.findMany({
     where: {
-      moduleName: { not: "Reservist" },
+      moduleName: { not: "Rs" },
       AND: [
-        { moduleName: { not: "Reservist" } },
+        { moduleName: { not: "Rs" } },
         { enrolledStudentsCount: { gt: 0 } },
         { timeSlotId: parseInt(params.timeSlotId) },
       ],

@@ -69,7 +69,7 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
                 >
                   {timeSlotItem.Exam.map(
                     (exam) =>
-                      exam.moduleName !== "Reservist" && (
+                      exam.moduleName !== "Rs" && (
                         <p key={exam.id}>{exam.moduleName}</p>
                       )
                   )}

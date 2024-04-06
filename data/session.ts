@@ -1,5 +1,6 @@
 "use server";
 import db from "@/lib/db";
+import { TimePeriod } from "@prisma/client";
 import { getTeachersForExam } from "./exam";
 
 export const getMonitoring = async (
@@ -85,51 +86,56 @@ export const validateSession = async (sessionId: number) => {
       for (const exam of timeSlot.Exam) {
         for (const monitoring of exam.Monitoring) {
           if (monitoring.locationId) {
-            const freeTeacherIds = await getTeachersForExam(timeSlot.id);
-            const neededTeacherNumber =
-              monitoring.location?.type === "AMPHITHEATER"
-                ? monitoring.location?.name === "NOVA"
-                  ? 4
-                  : 3
-                : 2;
-            const neededTeachers = freeTeacherIds
-              .slice(0, neededTeacherNumber)
-              .map((id) => ({
-                teacherId: id,
-              }));
-
-            for (const neededTeacher of neededTeachers) {
-              await db.monitoringLine.create({
-                data: {
-                  teacher: {
-                    connect: { id: neededTeacher.teacherId },
+            const { freeTeacherIds, locationTeachersMap } =
+              await getTeachersForExam(timeSlot.id);
+            if (monitoring.location?.id) {
+              let neededTeachers: number[] = [];
+              const teachersForLocation = locationTeachersMap.get(
+                monitoring.location.id
+              );
+              if (teachersForLocation !== undefined) {
+                neededTeachers = teachersForLocation;
+              } else {
+                const neededTeacherNumber =
+                  monitoring.location?.type === "AMPHITHEATER"
+                    ? monitoring.location?.name === "NOVA"
+                      ? 4
+                      : 3
+                    : 2;
+                neededTeachers = freeTeacherIds.slice(0, neededTeacherNumber);
+              }
+              for (const neededTeacher of neededTeachers) {
+                await db.monitoringLine.create({
+                  data: {
+                    teacher: {
+                      connect: { id: neededTeacher },
+                    },
+                    monitoring: {
+                      connect: { id: monitoring.id },
+                    },
                   },
-                  monitoring: {
-                    connect: { id: monitoring.id },
-                  },
-                },
-              });
+                });
+              }
             }
           }
         }
       }
     }
-    const ReservistTeachers = await getReservistTeachersForDay(day.id);
-    const reservistTeachersMorning = ReservistTeachers.slice(0, 10);
-    const reservistTeachersAfternoon = ReservistTeachers.slice(10, 20);
+    const RsTeachers = await getRsTeachersForDay(day.id);
+    const RsTeachersMorning = RsTeachers.slice(0, 10);
+    const RsTeachersAfternoon = RsTeachers.slice(10, 20);
 
-    // Counter for tracking teacher index in the reservist arrays
+    // Counter for tracking teacher index in the Rs arrays
     let morningIndex = 0;
     let afternoonIndex = 0;
 
     for (let i = 0; i < day.timeSlot.length; i++) {
       const timeSlot = day.timeSlot[i];
-      const reservistTeachers =
-        i < 2 ? reservistTeachersMorning : reservistTeachersAfternoon;
+      const RsTeachers = i < 2 ? RsTeachersMorning : RsTeachersAfternoon;
 
       await db.exam.create({
         data: {
-          moduleName: "Reservist",
+          moduleName: "Rs",
           options: "",
           enrolledStudentsCount: 0,
           timeSlotId: timeSlot.id,
@@ -139,7 +145,7 @@ export const validateSession = async (sessionId: number) => {
               {
                 locationId: null,
                 monitoringLines: {
-                  create: reservistTeachers,
+                  create: RsTeachers,
                 },
               },
             ],
@@ -176,7 +182,7 @@ export const cancelSession = async (sessionId: number) => {
               {
                 location: { isNot: null },
               },
-              { exam: { moduleName: { equals: "Reservist" } } },
+              { exam: { moduleName: { equals: "Rs" } } },
             ],
           },
         },
@@ -185,9 +191,15 @@ export const cancelSession = async (sessionId: number) => {
   });
 };
 
-export const getMonitoringDay = async (dayId: number) => {
-  return await db.exam.findMany({
-    where: { TimeSlot: { dayId: dayId }, moduleName: { not: "" } },
+export const getMonitoringDay = async (
+  dayId: number,
+  timePeriod: TimePeriod
+) => {
+  const exams = await db.exam.findMany({
+    where: {
+      TimeSlot: { dayId, timePeriod },
+      moduleName: { notIn: ["", "Rs"] },
+    },
     include: {
       moduleResponsible: true,
       Monitoring: {
@@ -198,6 +210,42 @@ export const getMonitoringDay = async (dayId: number) => {
       },
     },
   });
+
+  // Create an object to store the data for each location
+  const locationData: { [key: string]: { exams: any[] } } = {};
+
+  // Iterate over each exam to organize the data by location
+  exams.forEach((exam) => {
+    // Iterate over each monitoring entry within the exam
+    exam.Monitoring?.forEach((monitoringEntry) => {
+      if (monitoringEntry.location?.name) {
+        const locationName = monitoringEntry.location.name;
+
+        // Create a key for the location if it doesn't exist
+        if (!locationData[locationName]) {
+          locationData[locationName] = { exams: [] };
+        }
+
+        // Push exam details and teachers to the location data
+        locationData[locationName].exams.push({
+          examDetails: {
+            id: exam.id,
+            moduleName: exam.moduleName,
+            options: exam.options,
+            enrolledStudentsCount: exam.enrolledStudentsCount,
+            timeSlotId: exam.timeSlotId,
+            responsibleId: exam.responsibleId,
+            moduleResponsible: exam.moduleResponsible,
+          },
+          teachers:
+            monitoringEntry.monitoringLines
+              .map((line) => line.teacher?.lastName)
+              .filter(Boolean) || [],
+        });
+      }
+    });
+  });
+  return locationData;
 };
 
 export const deleteSession = async (sessionId: number) => {
@@ -209,7 +257,7 @@ export const deleteSession = async (sessionId: number) => {
   return session;
 };
 
-export const getReservistTeachersForDay = async (dayId: number) => {
+export const getRsTeachersForDay = async (dayId: number) => {
   const avgTeachers = await db.monitoringLine.groupBy({
     by: ["teacherId"],
     _count: {

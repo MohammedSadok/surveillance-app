@@ -24,11 +24,11 @@ import {
 } from "@/components/ui/table";
 import { getMonitoring, getMonitoringDay } from "@/data/session";
 import {
-  MonitoringExam,
+  MonitoringDayState,
   TeacherMonitoringData,
   sessionDays,
 } from "@/lib/types";
-import { Department } from "@prisma/client";
+import { Department, TimePeriod } from "@prisma/client";
 import axios from "axios";
 import {
   ArrowLeftCircle,
@@ -51,12 +51,16 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentDay, setCurrentDay] = useState(0); // Manage the current day index
+  const [day, setDay] = useState<{
+    period: string;
+    day: string;
+  } | null>(null);
+  const [currentRangeStart, setCurrentRangeStart] = useState(0); // Manage the current range start
   const [departments, setDepartments] = useState<Department[]>([]);
   const [department, setDepartment] = useState<number>(0);
   const [monitoring, setMonitoring] = useState<TeacherMonitoringData[]>([]);
-  const [monitoringDay, setMonitoringDay] = useState<MonitoringExam[]>([]);
-  const itemsPerPage = 10;
+  const [monitoringDay, setMonitoringDay] = useState<MonitoringDayState>({});
+  const itemsPerPage = 25;
   const componentRef = useRef<any>();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -67,10 +71,10 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
     content: () => dayRef.current,
   });
 
-  const loadExams = async () => {
+  const loadExams = async (id: number, type: TimePeriod) => {
     try {
       setLoading(true);
-      const exams = await getMonitoringDay(sessionDays[currentDay].id);
+      const exams = await getMonitoringDay(id, type);
 
       if (exams) {
         setMonitoringDay(exams);
@@ -84,7 +88,7 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
   // Use useEffect to call handlePrintDay when monitoringDay changes
   useEffect(() => {
-    if (monitoringDay.length > 0) {
+    if (Object.keys(monitoringDay).length !== 0) {
       handlePrintDay();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,27 +122,35 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
     fetchData();
   }, [department, sessionId]);
 
-  const displayedDay = sessionDays[currentDay]; // Get the currently displayed day
+  // Calculate the end of the current range
+  const currentRangeEnd = Math.min(currentRangeStart + 3, sessionDays.length);
+
+  // Use the current range to display the days
+  const displayedDays = sessionDays.slice(currentRangeStart, currentRangeEnd);
+
+  // Update the nextDays and previousDays functions to handle ranges
+  const nextDays = () => {
+    if (currentRangeEnd < sessionDays.length) {
+      setCurrentRangeStart(currentRangeStart + 3); // Increment the current range start
+      setCurrentPage(1); // Reset the current page when changing days
+    }
+  };
+
+  const previousDays = () => {
+    if (currentRangeStart > 0) {
+      setCurrentRangeStart(currentRangeStart - 3); // Decrement the current range start
+      setCurrentPage(1); // Reset the current page when changing days
+    }
+  };
+
+  // Calculate the index of the first and last teacher to be displayed on the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const displayedTeachers = monitoring.slice(indexOfFirstItem, indexOfLastItem);
 
+  // Slice the monitoring data to get only the teachers to be displayed on the current page
+  const displayedTeachers = monitoring.slice(indexOfFirstItem, indexOfLastItem);
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const nextDay = () => {
-    if (currentDay < sessionDays.length - 1) {
-      setCurrentDay(currentDay + 1); // Increment the current day index
-      setCurrentPage(1); // Reset the current page when changing days
-    }
-  };
-
-  const previousDay = () => {
-    if (currentDay > 0) {
-      setCurrentDay(currentDay - 1); // Decrement the current day index
-      setCurrentPage(1); // Reset the current page when changing days
-    }
   };
 
   return (
@@ -167,79 +179,120 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <Table className="border rounded-lg">
         <TableHeader>
-          <TableRow>
-            <TableCell className="border text-center" rowSpan={2}>
+          <TableRow key={10}>
+            <TableCell className="border text-center text-xs p-0.5" rowSpan={2}>
               Enseignants
             </TableCell>
 
-            <TableCell className="border text-center " colSpan={4}>
-              <div className="flex justify-between items-center">
-                <Button onClick={previousDay} variant="ghost">
-                  <ArrowLeftCircle />
-                </Button>
+            {displayedDays.map((day, index) => (
+              <TableCell
+                key={day.id}
+                className="border text-center p-1 text-xs relative"
+                colSpan={4}
+              >
+                {index === 0 && (
+                  <Button
+                    onClick={previousDays}
+                    variant="ghost"
+                    className="p-2 absolute left-0 top-1/2 transform -translate-y-1/2"
+                  >
+                    <ArrowLeftCircle className="w-5 h-5" />
+                  </Button>
+                )}
                 <Button
-                  variant="outline"
-                  className="border-none"
-                  onClick={loadExams}
+                  onClick={() => {
+                    setDay({ day: day.date, period: "Matin" });
+                    loadExams(day.id, "MORNING");
+                  }}
+                  variant="ghost"
+                  className="p-0.2 text-xs mr-6"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    displayedDay.date
+                    "Matin"
                   )}
                 </Button>
-                <Button onClick={nextDay} variant="ghost">
-                  <ArrowRightCircle />
+                {day.date}
+                <Button
+                  onClick={() => {
+                    setDay({ day: day.date, period: "Après midi" });
+                    loadExams(day.id, "AFTERNOON");
+                  }}
+                  variant="ghost"
+                  className="p-0.2 text-xs ml-6"
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin " />
+                  ) : (
+                    "Apres Midi"
+                  )}
                 </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            {displayedDay.timeSlot.map((timeSlotItem) => (
-              <TableCell
-                key={timeSlotItem.id}
-                className="border text-center text-xs"
-              >
-                {timeSlotItem.period}
+                {index === 2 && (
+                  <Button
+                    onClick={nextDays}
+                    variant="ghost"
+                    className="p-2 absolute right-0 top-1/2 transform -translate-y-1/2"
+                  >
+                    <ArrowRightCircle className="w-5 h-5" />
+                  </Button>
+                )}
               </TableCell>
             ))}
           </TableRow>
+          <TableRow key={11}>
+            {displayedDays
+              .flatMap((day) => day.timeSlot)
+              .map((timeSlotItem) => (
+                <TableCell
+                  key={timeSlotItem.id}
+                  className="border text-center text-xs p-0"
+                >
+                  {timeSlotItem.period}
+                </TableCell>
+              ))}
+          </TableRow>
         </TableHeader>
         <TableBody>
-          {displayedTeachers.map((teacher) => (
-            <TableRow key={teacher.id} className="py-4">
-              <TableCell className="border text-center">
+          {displayedTeachers.map((teacher, index) => (
+            <TableRow key={index} className="py-4">
+              <TableCell className="border text-center text-xs p-0.2">
                 {teacher.firstName + " " + teacher.lastName}
               </TableCell>
-              {displayedDay.timeSlot.map((timeSlotItem) => {
-                const monitoringLine = teacher.monitoringLines.find(
-                  (monitoringLine) =>
-                    monitoringLine.monitoring.exam?.timeSlotId ===
-                    timeSlotItem.id
-                );
-                return (
-                  <TableCell
-                    key={timeSlotItem.id}
-                    className="border text-center text-s"
-                  >
-                    {monitoringLine ? (
-                      <span>
-                        {monitoringLine.monitoring.exam?.moduleName ===
-                        "Reservist"
-                          ? "Reservist"
-                          : monitoringLine.monitoring.location === null
-                          ? "TT"
-                          : isNaN(
-                              parseInt(monitoringLine.monitoring.location?.name)
-                            )
-                          ? monitoringLine.monitoring.location?.name
-                          : "Salle " +
-                            parseInt(monitoringLine.monitoring.location?.name)}
-                      </span>
-                    ) : null}
-                  </TableCell>
-                );
-              })}
+              {displayedDays
+                .flatMap((day) => day.timeSlot)
+                .map((timeSlotItem) => {
+                  const monitoringLine = teacher.monitoringLines.find(
+                    (monitoringLine) =>
+                      monitoringLine.monitoring.exam?.timeSlotId ===
+                      timeSlotItem.id
+                  );
+                  return (
+                    <TableCell
+                      key={timeSlotItem.id}
+                      className="border text-center text-xs p-0.2"
+                    >
+                      {monitoringLine ? (
+                        <span>
+                          {monitoringLine.monitoring.exam?.moduleName === "Rs"
+                            ? "Rs"
+                            : monitoringLine.monitoring.location === null
+                            ? "TT"
+                            : isNaN(
+                                parseInt(
+                                  monitoringLine.monitoring.location?.name
+                                )
+                              )
+                            ? monitoringLine.monitoring.location?.name
+                            : "Salle " +
+                              parseInt(
+                                monitoringLine.monitoring.location?.name
+                              )}
+                        </span>
+                      ) : null}
+                    </TableCell>
+                  );
+                })}
             </TableRow>
           ))}
         </TableBody>
@@ -249,9 +302,7 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
         <PaginationContent className="self-end">
           <PaginationItem className="hover:cursor-pointer">
             <PaginationPrevious
-              onClick={() =>
-                currentPage > 1 && handlePageChange(currentPage - 1)
-              }
+              onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
             />
           </PaginationItem>
           {Array.from(
@@ -271,7 +322,7 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
             <PaginationNext
               onClick={() =>
                 currentPage < Math.ceil(monitoring.length / itemsPerPage) &&
-                handlePageChange(currentPage + 1)
+                setCurrentPage(currentPage + 1)
               }
             />
           </PaginationItem>
@@ -295,12 +346,9 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <div className="hidden">
         <div ref={dayRef}>
-          <p className="capitalize text-xl">
-            {department !== 0
-              ? "Département: " +
-                departments.find((dep) => dep.id == department)?.name
-              : null}
-          </p>
+          <h1>JOUR: {day?.day}</h1>
+          <h1>SEANCE :{day?.period}</h1>
+          <h1></h1>
           <PrintDayMonitoring monitoringDay={monitoringDay} />
         </div>
       </div>

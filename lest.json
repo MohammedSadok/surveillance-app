@@ -1,0 +1,45 @@
+[
+  {
+    "local": [
+      {
+        "localName": "NOVA",
+        "surv": [
+          {
+            "module": "math",
+            "teachers": [
+              {
+                "teachers": "ABOUELMEHDI"
+              },
+              {
+                "teachers": "AIT ABDELOUAHAD"
+              },
+              {
+                "teachers": "BAHBOUHI"
+              },
+              {
+                "teachers": "BELLAMINE"
+              }
+            ]
+          },
+          {
+            "module": "angular",
+            "teachers": [
+              {
+                "teachers": "ABOUELMEHDI"
+              },
+              {
+                "teachers": "AIT ABDELOUAHAD"
+              },
+              {
+                "teachers": "BAHBOUHI"
+              },
+              {
+                "teachers": "BELLAMINE"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
