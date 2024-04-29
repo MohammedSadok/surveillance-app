@@ -41,13 +41,13 @@ const PrintStudentPresent: React.FC<Props> = ({ students }) => {
                 <Table className="border rounded-lg h-full" key={index}>
                   <TableHeader>
                     <TableRow className="border text-center">
-                      <TableHead
-                        key="numero"
-                        className="border text-center w-1/3"
-                      >
-                        Numéro
+                      <TableHead key="numero" className="border text-center">
+                        {"Numéro d'éxam"}
                       </TableHead>
-                      <TableHead key="nom" className="border text-center w-1/3">
+                      <TableHead key="apogi" className="border text-center">
+                        {"Numéro d'apogée"}
+                      </TableHead>
+                      <TableHead key="nom" className="border text-center">
                         Nom et prénom
                       </TableHead>
                       <TableHead key="nom" className="border text-center w-1/3">
@@ -62,7 +62,10 @@ const PrintStudentPresent: React.FC<Props> = ({ students }) => {
                           {++studentNumber}
                         </TableCell>
                         <TableCell className="border text-center text-xs p-0.5">
-                          {student.firstName}
+                          {student.number}
+                        </TableCell>
+                        <TableCell className="border text-center text-xs p-0.5">
+                          {student.firstName + " " + student.lastName}
                         </TableCell>
                         <TableCell className="border text-center text-xs p-0.5"></TableCell>
                       </TableRow>

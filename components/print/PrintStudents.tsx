@@ -42,7 +42,10 @@ const PrintStudents: React.FC<Props> = ({ students }) => {
                   <TableHeader>
                     <TableRow className="border text-center">
                       <TableHead key="numero" className="border text-center">
-                        Numéro
+                        {"Numéro d'éxam"}
+                      </TableHead>
+                      <TableHead key="apogi" className="border text-center">
+                        {"Numéro d'apogée"}
                       </TableHead>
                       <TableHead key="nom" className="border text-center">
                         Nom et prénom
@@ -56,7 +59,10 @@ const PrintStudents: React.FC<Props> = ({ students }) => {
                           {++studentNumber}
                         </TableCell>
                         <TableCell className="border text-center text-xs p-0.5">
-                          {student.firstName}
+                          {student.number}
+                        </TableCell>
+                        <TableCell className="border text-center text-xs p-0.5">
+                          {student.firstName + " " + student.lastName}
                         </TableCell>
                       </TableRow>
                     ))}

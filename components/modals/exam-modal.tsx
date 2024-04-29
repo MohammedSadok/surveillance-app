@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useModal } from "@/hooks/useModalStore";
+import { Student } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ExamSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,11 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-type Student = {
-  id: number;
-  firstName: string;
-  lastName: string;
-};
+
 const ExamModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const { exam } = data;
@@ -85,7 +82,6 @@ const ExamModal = () => {
         if (department !== null) {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_APP_URL}/api/monitoring`,
-
             {
               departmentId: department,
               timeSlotId: parseInt(params.timeSlotId),
@@ -127,13 +123,20 @@ const ExamModal = () => {
         const binaryString = target.result as string;
         const workbook = read(binaryString, { type: "binary" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data: Student[] = utils.sheet_to_json(sheet);
-
-        // Update newValues with the correct students data
+        const data: any[] = utils.sheet_to_json(sheet);
+        const students: Student[] = data.map((element: any) => {
+          const etudiant: Student = {
+            number: element[Object.keys(element)[0]],
+            firstName: element[Object.keys(element)[1]],
+            lastName: element[Object.keys(element)[2]],
+          };
+          return etudiant;
+        });
         const newValues = {
           ...values,
           timeSlotId: parseInt(params.timeSlotId),
-          students: data.slice(0, values.enrolledStudentsCount),
+          students: students,
+          enrolledStudentsCount: data.length,
         };
 
         try {
@@ -203,26 +206,6 @@ const ExamModal = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="enrolledStudentsCount"
-                defaultValue={0}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nombre d&apos;étudiants inscrits</FormLabel>
-                    <Input
-                      disabled={isLoading}
-                      placeholder="Entrez le nombre d'étudiants inscrits"
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10) || 0)
-                      }
-                      value={field.value}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="space-y-2">
                 <FormLabel>Responsable du module</FormLabel>
                 <div className="grid gap-2 grid-cols-10">

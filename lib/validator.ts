@@ -74,9 +74,6 @@ export const ExamSchema = z.object({
   options: z.string().min(3, {
     message: "Le champ des options doit contenir au moins 3 caractères.",
   }),
-  enrolledStudentsCount: z.number().int().min(1, {
-    message: "Le nombre d'étudiants doit être positif.",
-  }),
   responsibleId: z.number().int().min(1, {
     message: "Le responsable du module est requis.",
   }),
@@ -85,6 +82,7 @@ export const ExamSchema = z.object({
   }),
   urlFile: z.instanceof(File).nullable(),
 });
+
 export const ExamSchemaApi = z.object({
   moduleName: z.string().min(3, {
     message: "Le nom doit contenir au moins 3 caractères.",
