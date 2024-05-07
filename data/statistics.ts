@@ -62,10 +62,7 @@ export const getStatisticsOfLasSession = async () => {
 
   let avgMonitoring;
   if (totalMonitoring._count.id !== 0) {
-    avgMonitoring = (
-      (totalMonitoring._count.id / numberOfTeachers) *
-      2
-    ).toFixed(2);
+    avgMonitoring = (totalMonitoring._count.id / numberOfTeachers).toFixed(2);
   } else {
     avgMonitoring = 0;
   }

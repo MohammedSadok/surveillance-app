@@ -26,7 +26,7 @@ const PrintMonitoringDay: React.FC<Props> = ({ monitoringDay }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Object.entries(monitoringDay).map(([localName, moduleData], index) =>
+          {Object.entries(monitoringDay).map(([localName, moduleData]) =>
             moduleData.exams.map((exam, examIndex) => {
               return (
                 <TableRow key={`${localName}-${examIndex}`}>

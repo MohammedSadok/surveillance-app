@@ -84,7 +84,7 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
                       return (
                         <TableCell
                           key={timeSlotItem.id}
-                          className=" text-center text-[8px] p-0 border w-5"
+                          className=" text-center text-[10px] p-0 border w-6"
                         >
                           {monitoringLine ? (
                             <span>

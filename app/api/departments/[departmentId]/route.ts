@@ -12,7 +12,6 @@ export async function GET(
         departmentId: parseInt(params.departmentId),
       },
     });
-
     return NextResponse.json(teachers);
   } catch {
     return new NextResponse("Could not get Departments", { status: 500 });

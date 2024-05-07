@@ -98,7 +98,7 @@ export const validateSession = async (sessionId: number) => {
               } else {
                 const neededTeacherNumber =
                   monitoring.location?.type === "AMPHITHEATER"
-                    ? monitoring.location?.name === "NOVA"
+                    ? monitoring.location?.name === "NA"
                       ? 4
                       : 3
                     : 2;
@@ -266,19 +266,28 @@ export const getRsTeachersForDay = async (dayId: number) => {
     orderBy: { _count: { id: "asc" } },
     where: {
       teacher: {
-        NOT: {
-          monitoringLines: {
-            some: {
-              monitoring: {
-                exam: {
-                  TimeSlot: {
-                    dayId,
+        AND: [
+          {
+            NOT: {
+              monitoringLines: {
+                some: {
+                  monitoring: {
+                    exam: {
+                      TimeSlot: {
+                        dayId,
+                      },
+                    },
                   },
                 },
               },
             },
           },
-        },
+          {
+            monitoringLines: {
+              some: { monitoring: { exam: { moduleName: { equals: "Rs" } } } },
+            },
+          },
+        ],
       },
     },
   });
