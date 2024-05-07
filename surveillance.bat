@@ -6,4 +6,7 @@ timeout /t 10
 
 echo Démarrage du projet Next.js...
 cd "C:\surveillance-app"
-npm start
+start npm start
+
+echo Ouverture de Google Chrome sur localhost:3000...
+start chrome http://localhost:3000
