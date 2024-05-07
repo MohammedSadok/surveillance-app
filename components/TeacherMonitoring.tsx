@@ -333,12 +333,23 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <div className="hidden">
         <div ref={componentRef}>
-          <p className="capitalize text-xl">
-            {department !== 0
-              ? "Département: " +
-                departments.find((dep) => dep.id == department)?.name
-              : null}
-          </p>
+          <div className="flex justify-between items-center">
+            <Image
+              src={logo}
+              alt={""}
+              style={{
+                objectFit: "contain",
+              }}
+              className="w-[200px]"
+            />
+            <p className="capitalize text-xl">
+              {department !== 0
+                ? "Département: " +
+                  departments.find((dep) => dep.id == department)?.name
+                : null}
+            </p>
+          </div>
+
           <PrintTeacherMonitoring
             monitoring={monitoring}
             sessionDays={sessionDays}

@@ -6,20 +6,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MonitoringDayState } from "@/lib/types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 interface Props {
   monitoringDay: MonitoringDayState;
 }
 
 const PrintMonitoringDay: React.FC<Props> = ({ monitoringDay }) => {
-  const [prevModuleName, setPrevModuleName] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Reset prevModuleName when monitoringDay changes
-    setPrevModuleName(null);
-  }, [monitoringDay]);
-
   return (
     <div className="space-y-3">
       <Table className="border rounded-lg">
@@ -33,31 +26,17 @@ const PrintMonitoringDay: React.FC<Props> = ({ monitoringDay }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Object.entries(monitoringDay).map(([localName, moduleData]) =>
+          {Object.entries(monitoringDay).map(([localName, moduleData], index) =>
             moduleData.exams.map((exam, examIndex) => {
-              const moduleName =
-                exam.examDetails.moduleName !== prevModuleName
-                  ? exam.examDetails.moduleName
-                  : prevModuleName;
-              const showModuleName =
-                prevModuleName === null || moduleName !== prevModuleName;
-              // Update prevModuleName only if module changes
-              if (showModuleName && examIndex === 0) {
-                setPrevModuleName(moduleName);
-              }
               return (
                 <TableRow key={`${localName}-${examIndex}`}>
                   <TableCell className="border text-xs p-1">
-                    {examIndex === 0 && (
-                      <>
-                        {showModuleName && <p>Module: {moduleName}</p>}
-                        <p>S {examIndex + 1}:</p>
-                        <p>
-                          {exam.examDetails.moduleResponsible?.firstName}{" "}
-                          {exam.examDetails.moduleResponsible?.lastName}
-                        </p>
-                      </>
-                    )}
+                    <p>Module: {exam.examDetails.moduleName}</p>
+                    <p>S {examIndex + 1}:</p>
+                    <p>
+                      {exam.examDetails.moduleResponsible?.firstName}{" "}
+                      {exam.examDetails.moduleResponsible?.lastName}
+                    </p>
                   </TableCell>
                   <TableCell className="border text-center text-xs">
                     {localName}
