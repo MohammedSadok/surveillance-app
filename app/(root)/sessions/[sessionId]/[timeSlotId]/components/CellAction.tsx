@@ -5,6 +5,8 @@ import PrintStudentPresent from "@/components/print/PrintStudentPresent";
 import PrintStudents from "@/components/print/PrintStudents";
 import { Button } from "@/components/ui/button";
 import { getStudentsForExam } from "@/data/exam";
+import logo from "@/images/logo.png";
+import Image from "next/image";
 import {
   ExamStudentType,
   ExamType,

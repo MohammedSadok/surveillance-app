@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getMonitoring, getMonitoringDay } from "@/data/session";
+import logo from "@/images/logo.png";
 import {
   MonitoringDayState,
   TeacherMonitoringData,
@@ -36,6 +37,7 @@ import {
   FileDown,
   Loader2,
 } from "lucide-react";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import PrintDayMonitoring from "./print/PrintMonitoringDay";
@@ -346,9 +348,20 @@ const TeacherMonitoring: React.FC<TeacherMonitoringProps> = ({
 
       <div className="hidden">
         <div ref={dayRef}>
-          <h1>JOUR: {day?.day}</h1>
-          <h1>SEANCE :{day?.period}</h1>
-          <h1></h1>
+          <div className="flex justify-between items-center">
+            <Image
+              src={logo}
+              alt={""}
+              style={{
+                objectFit: "contain",
+              }}
+              className="w-[200px]"
+            />
+            <div className="space-y-2">
+              <h1>JOUR: {day?.day}</h1>
+              <h1>SEANCE :{day?.period}</h1>
+            </div>
+          </div>
           <PrintDayMonitoring monitoringDay={monitoringDay} />
         </div>
       </div>

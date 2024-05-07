@@ -22,7 +22,7 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
     return chunkedArray;
   };
 
-  const groupedDays = chunkArray(sessionDays, 4);
+  const groupedDays = chunkArray(sessionDays, 6);
 
   return (
     <>
@@ -51,17 +51,17 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
               <TableRow key={2}>
                 {displayedDays.map((day, index) => (
                   <>
-                    <TableCell className="border text-center text-xs p-0">
-                      S1
+                    <TableCell
+                      className="border text-center text-xs p-0"
+                      colSpan={2}
+                    >
+                      MA
                     </TableCell>
-                    <TableCell className="border text-center text-xs p-0">
-                      S2
-                    </TableCell>
-                    <TableCell className="border text-center text-xs p-0">
-                      S3
-                    </TableCell>
-                    <TableCell className="border text-center text-xs p-0">
-                      S4
+                    <TableCell
+                      className="border text-center text-xs p-0"
+                      colSpan={2}
+                    >
+                      AM
                     </TableCell>
                   </>
                 ))}
@@ -84,7 +84,7 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
                       return (
                         <TableCell
                           key={timeSlotItem.id}
-                          className="border text-center text-[8px] p-0"
+                          className=" text-center text-[8px] p-0 border w-5"
                         >
                           {monitoringLine ? (
                             <span>
@@ -104,7 +104,9 @@ const PrintTeacherMonitoring = ({ monitoring, sessionDays }: Props) => {
                                     monitoringLine.monitoring.location?.name
                                   )}
                             </span>
-                          ) : null}
+                          ) : (
+                            <span>-</span>
+                          )}
                         </TableCell>
                       );
                     })}
