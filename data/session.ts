@@ -266,6 +266,7 @@ export const getRsTeachersForDay = async (dayId: number) => {
     orderBy: { _count: { id: "asc" } },
     where: {
       teacher: {
+        isDispense: false,
         AND: [
           {
             NOT: {
@@ -298,6 +299,7 @@ export const getRsTeachersForDay = async (dayId: number) => {
   const freeTeachers = await db.teacher.findMany({
     select: { id: true },
     where: {
+      isDispense: false,
       AND: [
         {
           id: {

@@ -6,32 +6,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import logo from "@/images/logo.png";
 import { sessionDays } from "@/lib/types";
-import { FileDown } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
-import PrintSchedule from "./print/PrintSchedule";
-import { Button } from "./ui/button";
+import Image from "next/image";
+import React from "react";
 
 interface ScheduleProps {
   sessionDays: sessionDays[];
-  sessionId: string;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
-  const router = useRouter();
-  const componentRef = useRef<any>();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
+const PrintSchedule: React.FC<ScheduleProps> = ({ sessionDays }) => {
   return (
     <div className="flex flex-col gap-3 relative">
-      <div className="flex flex-row-reverse">
-        <Button onClick={handlePrint} variant="ghost">
-          <FileDown />
-        </Button>
-      </div>
+      <Image
+        src={logo}
+        alt={""}
+        style={{
+          objectFit: "contain",
+        }}
+        className="w-[200px]"
+      />
       <Table className="border rounded-lg">
         <TableHeader>
           <TableRow>
@@ -55,11 +49,6 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
                 <TableCell
                   key={timeSlotItem.id}
                   className="border text-center cursor-pointer hover:bg-gray-300"
-                  onClick={() =>
-                    router.push(`/sessions/${sessionId}/${timeSlotItem.id}`, {
-                      scroll: false,
-                    })
-                  }
                 >
                   {timeSlotItem.Exam.map((exam) =>
                     exam.moduleName !== "Rs" && exam.moduleName ? (
@@ -74,13 +63,8 @@ const Schedule: React.FC<ScheduleProps> = ({ sessionDays, sessionId }) => {
           ))}
         </TableBody>
       </Table>
-      <div className="hidden">
-        <div ref={componentRef}>
-          <PrintSchedule sessionDays={sessionDays} />
-        </div>
-      </div>
     </div>
   );
 };
 
-export default Schedule;
+export default PrintSchedule;

@@ -118,8 +118,18 @@ const SessionModal = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Normale">Normale</SelectItem>
-                        <SelectItem value="Rattrapage">Rattrapage</SelectItem>
+                        <SelectItem value="Normale d'hiver">
+                          Normale d&apos;hiver
+                        </SelectItem>
+                        <SelectItem value="Normale de printemps">
+                          Normale de printemps
+                        </SelectItem>
+                        <SelectItem value="Rattrapage d'hiver">
+                          Rattrapage d&apos;hiver
+                        </SelectItem>
+                        <SelectItem value="Rattrapage de printemps">
+                          Rattrapage de printemps
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

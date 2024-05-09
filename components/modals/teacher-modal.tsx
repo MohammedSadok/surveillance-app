@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
 
 const TeacherModal = () => {
@@ -45,6 +47,7 @@ const TeacherModal = () => {
       form.setValue("departmentId", teacher.departmentId);
       form.setValue("email", teacher.email);
       form.setValue("phoneNumber", teacher.phoneNumber);
+      form.setValue("isDispense", teacher.isDispense);
     } else {
       form.reset();
     }
@@ -147,6 +150,23 @@ const TeacherModal = () => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="isDispense"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Est Dispencer</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
             <DialogFooter className="px-6 py-4 bg-gray-100">
               <Button disabled={isLoading}>
                 {isLoading ? (

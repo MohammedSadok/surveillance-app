@@ -56,7 +56,32 @@ export const getLocationsForExam = async (
       enrolledStudentsCount = 0;
     }
   }
-  return { examRooms, remainingStudent: enrolledStudentsCount };
+
+  const rooms = examRooms.map((room) => room.id);
+  return { rooms, remainingStudent: enrolledStudentsCount };
+};
+export const getLocationsForExamManual = async (timeSlotId: number) => {
+  const occupiedLocations = await db.monitoring.findMany({
+    where: {
+      exam: { timeSlotId: timeSlotId },
+    },
+    select: { locationId: true },
+  });
+
+  const occupiedLocationsIds: number[] = occupiedLocations
+    .filter((local) => local.locationId !== null)
+    .map((local) => local.locationId as number);
+
+  const freeLocations = await db.location.findMany({
+    where: {
+      id: {
+        notIn: occupiedLocationsIds,
+      },
+    },
+    orderBy: { size: "desc" },
+  });
+
+  return { freeLocations };
 };
 
 export const getTeachersForExam = async (timeSlotId: number) => {
@@ -68,6 +93,7 @@ export const getTeachersForExam = async (timeSlotId: number) => {
     orderBy: { _count: { id: "asc" } },
     where: {
       teacher: {
+        isDispense: false,
         monitoringLines: {
           none: {
             monitoring: {
@@ -89,6 +115,7 @@ export const getTeachersForExam = async (timeSlotId: number) => {
     where: {
       AND: [
         {
+          isDispense: false,
           id: {
             notIn: avgTeachersIds,
           },
@@ -128,6 +155,9 @@ export const getTeachersForExam = async (timeSlotId: number) => {
       },
       monitoringLines: {
         some: {
+          teacher: {
+            isDispense: false,
+          },
           monitoring: {
             exam: {
               TimeSlot: { dayId: day?.dayId, timePeriod: day?.timePeriod },

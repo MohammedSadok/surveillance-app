@@ -44,6 +44,7 @@ export const TeacherSchema = z.object({
   email: z.string().email({
     message: "Veuillez entrer une adresse e-mail valide.",
   }),
+  isDispense: z.boolean().default(false).optional(),
   departmentId: z.number().int().min(1, {
     message: "Veuillez sélectionner un département.",
   }),
@@ -81,6 +82,8 @@ export const ExamSchema = z.object({
     message: "L'identifiant de l'intervalle de temps est requis.",
   }),
   urlFile: z.instanceof(File).nullable(),
+  manual: z.boolean().default(false).optional(),
+  locations: z.array(z.number()),
 });
 
 export const ExamSchemaApi = z.object({
@@ -100,6 +103,8 @@ export const ExamSchemaApi = z.object({
     message: "L'identifiant de l'intervalle de temps est requis.",
   }),
   students: z.array(StudentSchema),
+  manual: z.boolean().default(false).optional(),
+  locations: z.array(z.number()),
 });
 
 export const LoginSchema = z.object({

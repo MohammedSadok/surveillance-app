@@ -31,8 +31,14 @@ export async function PATCH(
       return new NextResponse("user id is required", { status: 400 });
     }
     const body = await req.json();
-    const { firstName, lastName, phoneNumber, email, departmentId } =
-      TeacherSchema.parse(body);
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      departmentId,
+      isDispense,
+    } = TeacherSchema.parse(body);
     const teacher = await db.teacher.update({
       where: {
         id: parseInt(params.teacherId),
@@ -43,6 +49,7 @@ export async function PATCH(
         phoneNumber,
         email,
         departmentId,
+        isDispense,
       },
     });
     return NextResponse.json(teacher);

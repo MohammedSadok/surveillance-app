@@ -3,7 +3,6 @@ import db from "@/lib/db";
 import { ExamSchemaApi } from "@/lib/validator";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -14,14 +13,23 @@ export async function POST(req: Request) {
       enrolledStudentsCount,
       timeSlotId,
       students,
+      locations,
+      manual,
     } = ExamSchemaApi.parse(body);
+    let examRooms: number[] = [];
+    let studentsRemaining: number = 0;
+    if (manual) {
+      examRooms = locations;
+    } else {
+      const { rooms, remainingStudent } = await getLocationsForExam(
+        timeSlotId,
+        enrolledStudentsCount
+      );
+      examRooms = rooms;
+      studentsRemaining = remainingStudent;
+    }
 
-    const { examRooms, remainingStudent } = await getLocationsForExam(
-      timeSlotId,
-      enrolledStudentsCount
-    );
-
-    if (remainingStudent > 0) {
+    if (studentsRemaining > 0) {
       return NextResponse.json({
         error: "nombre de locaux insuffisant pour passer l'examen",
       });
@@ -73,7 +81,7 @@ export async function POST(req: Request) {
 
             ...examRooms.flatMap((room, index) => {
               return {
-                locationId: room.id,
+                locationId: room,
               };
             }),
           ],

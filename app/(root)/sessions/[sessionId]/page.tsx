@@ -41,10 +41,12 @@ const ExamsPage = async ({ params }: ExamsPageProps) => {
         defaultValue={!session?.isValidated ? "exam" : "surveillance"}
         className="space-y-4"
       >
-        <TabsList>
-          <TabsTrigger value="exam">Exam</TabsTrigger>
-          <TabsTrigger value="surveillance">Surveillance</TabsTrigger>
-        </TabsList>
+        <div>
+          <TabsList>
+            <TabsTrigger value="exam">Exam</TabsTrigger>
+            <TabsTrigger value="surveillance">Surveillance</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="exam">
           <Schedule sessionDays={formattedDays} sessionId={params.sessionId} />
         </TabsContent>

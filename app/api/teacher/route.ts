@@ -15,8 +15,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { firstName, lastName, phoneNumber, email, departmentId } =
-      TeacherSchema.parse(body);
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      departmentId,
+      isDispense,
+    } = TeacherSchema.parse(body);
     const teacher = await db.teacher.create({
       data: {
         firstName,
@@ -24,6 +30,7 @@ export async function POST(req: Request) {
         phoneNumber,
         email,
         departmentId,
+        isDispense,
       },
     });
 
